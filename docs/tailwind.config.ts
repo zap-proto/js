@@ -4,8 +4,6 @@ const config: Config = {
   content: [
     './app/**/*.{js,ts,jsx,tsx,mdx}',
     './content/**/*.{js,ts,jsx,tsx,mdx}',
-    './node_modules/@hanzo/ui/**/*.{js,ts,jsx,tsx}',
-    './node_modules/@hanzo/docs/**/*.{js,ts,jsx,tsx}',
   ],
   theme: {
     extend: {
