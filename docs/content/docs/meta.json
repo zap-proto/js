@@ -1,0 +1,20 @@
+{
+  "title": "ZAP Documentation",
+  "pages": [
+    "index",
+    "installation",
+    "quickstart",
+    "---API Reference---",
+    "client",
+    "server",
+    "gateway",
+    "types",
+    "---Platform Guides---",
+    "browser",
+    "nodejs",
+    "---Advanced---",
+    "identity",
+    "crypto",
+    "examples"
+  ]
+}

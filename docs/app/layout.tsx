@@ -1,36 +1,29 @@
-import type { Metadata } from 'next'
-import { Inter, JetBrains_Mono } from 'next/font/google'
-import './globals.css'
-
-const inter = Inter({
-  subsets: ['latin'],
-  variable: '--font-sans',
-})
-
-const jetbrainsMono = JetBrains_Mono({
-  subsets: ['latin'],
-  variable: '--font-mono',
-})
+import './global.css';
+import type { Metadata, Viewport } from 'next';
+import type { ReactNode } from 'react';
+import { RootProvider } from 'fumadocs-ui/provider';
 
 export const metadata: Metadata = {
   title: {
-    default: 'ZAP TypeScript - Zero-Copy App Proto',
-    template: '%s | ZAP TypeScript',
+    template: '%s | ZAP',
+    default: 'ZAP - Zero-Copy App Proto',
   },
-  description: 'High-performance Cap\'n Proto RPC for AI agent communication in TypeScript',
-  keywords: ['zap', 'typescript', 'capnproto', 'rpc', 'ai', 'agents', 'mcp'],
-}
+  description: 'High-performance Cap\'n Proto RPC for AI agent communication',
+};
 
-export default function RootLayout({
-  children,
-}: {
-  children: React.ReactNode
-}) {
+export const viewport: Viewport = {
+  themeColor: [
+    { media: '(prefers-color-scheme: dark)', color: '#0A0A0A' },
+    { media: '(prefers-color-scheme: light)', color: '#fff' },
+  ],
+};
+
+export default function RootLayout({ children }: { children: ReactNode }) {
   return (
-    <html lang="en" className={`${inter.variable} ${jetbrainsMono.variable}`}>
-      <body className="min-h-screen bg-white dark:bg-zinc-950 text-zinc-900 dark:text-zinc-100">
-        {children}
+    <html lang="en" suppressHydrationWarning>
+      <body>
+        <RootProvider>{children}</RootProvider>
       </body>
     </html>
-  )
+  );
 }
