@@ -8,7 +8,7 @@ export const metadata: Metadata = {
     template: '%s | ZAP',
     default: 'ZAP - Zero-Copy App Proto',
   },
-  description: 'High-performance Cap\'n Proto RPC for AI agent communication',
+  description: 'JavaScript/TypeScript bindings for ZAP - Zero-Copy App Proto for AI agent communication',
 };
 
 export const viewport: Viewport = {
