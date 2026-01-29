@@ -1,7 +1,7 @@
 {
-  "name": "@zap-protocol/zap",
-  "version": "0.2.1",
-  "description": "ZAP - Zero-Copy App Proto for JavaScript/TypeScript",
+  "name": "@zap-proto/zap",
+  "version": "1.0.0",
+  "description": "ZAP - Zero-Copy App Proto for AI agent communication",
   "type": "module",
   "main": "./dist/index.js",
   "module": "./dist/index.js",
@@ -10,41 +10,51 @@
     ".": {
       "import": "./dist/index.js",
       "types": "./dist/index.d.ts"
+    },
+    "./browser": {
+      "import": "./dist/browser/index.js",
+      "types": "./dist/browser/index.d.ts"
+    },
+    "./server": {
+      "import": "./dist/server/index.js",
+      "types": "./dist/server/index.d.ts"
+    },
+    "./transport": {
+      "import": "./dist/transport/index.js",
+      "types": "./dist/transport/index.d.ts"
     }
   },
   "files": [
     "dist",
-    "src"
+    "schema"
   ],
   "scripts": {
-    "build": "tsc",
+    "build": "pnpm build:schema && tsc",
+    "build:schema": "capnp-es schema/zap.capnp -ots",
     "dev": "tsc --watch",
     "test": "vitest run",
     "test:watch": "vitest",
-    "test:coverage": "vitest run --coverage",
     "lint": "eslint src",
     "format": "prettier --write src"
   },
   "keywords": [
-    "capnproto",
+    "zap",
+    "zap-proto",
+    "mcp",
     "rpc",
     "agents",
-    "mcp",
     "ai",
-    "zap"
+    "zero-copy"
   ],
-  "author": "ZAP Protocol <dev@zap.dev>",
+  "author": "ZAP Protocol",
   "license": "MIT",
   "repository": {
     "type": "git",
     "url": "https://github.com/zap-protocol/zap-js"
   },
-  "homepage": "https://zap.dev",
-  "bugs": {
-    "url": "https://github.com/zap-protocol/zap-js/issues"
-  },
+  "homepage": "https://zap-protocol.github.io",
   "dependencies": {
-    "capnp-ts": "^0.7.0"
+    "capnp-es": "^0.0.14"
   },
   "devDependencies": {
     "@types/node": "^22.0.0",

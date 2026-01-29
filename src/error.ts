@@ -4,12 +4,12 @@
 
 /** Base ZAP error */
 export class ZapError extends Error {
-  readonly code: string;
+  readonly code: number | string;
   readonly details: Record<string, unknown> | undefined;
 
   constructor(
     message: string,
-    code = 'ZAP_ERROR',
+    code: number | string = -32603,
     details?: Record<string, unknown>
   ) {
     super(message);
