@@ -7,17 +7,15 @@
 
 import { Protocol, MessageType, generateClientId } from './protocol.js';
 import { ZapError } from './error.js';
+import { ClientType } from './types.js';
 import type {
   ZapRequest,
   ZapResponse,
   ZapServerOptions,
   Tool,
-  ToolResult,
   BrowserParams,
-  BrowserResult,
   Handshake,
   HandshakeResponse,
-  ClientType,
   ZapEventHandler,
   ToolHandler,
   BrowserHandler,
@@ -33,10 +31,11 @@ interface ConnectedClient {
   id: string;
   type: ClientType;
   capabilities: string[];
-  ws: WebSocket;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  ws: any;
   lastActive: number;
-  browser?: string;
-  version?: string;
+  browser: string | undefined;
+  version: string | undefined;
 }
 
 /**
@@ -273,7 +272,11 @@ export class ZapServer {
       if (clientId) {
         const client = this.clients.get(clientId);
         if (client) {
-          this.emit('extension:disconnect', { id: clientId, ...client });
+          this.emit('extension:disconnect', {
+            clientId,
+            browser: client.browser,
+            version: client.version,
+          });
         }
         this.clients.delete(clientId);
       }
@@ -307,8 +310,8 @@ export class ZapServer {
       capabilities: handshake.capabilities,
       ws,
       lastActive: Date.now(),
-      browser: handshake.metadata?.browser,
-      version: handshake.metadata?.version,
+      browser: handshake.metadata?.['browser'],
+      version: handshake.metadata?.['version'],
     };
 
     this.clients.set(clientId, client);
@@ -344,12 +347,18 @@ export class ZapServer {
 
     try {
       const result = await this.processRequest(request);
-      response = { id: request.id, result };
+      if (result !== undefined) {
+        response = { id: request.id, result: result as NonNullable<ZapResponse['result']> };
+      } else {
+        response = { id: request.id };
+      }
     } catch (error) {
+      const zapError = error instanceof ZapError ? error : null;
+      const code = zapError?.code;
       response = {
         id: request.id,
         error: {
-          code: error instanceof ZapError ? error.code : -32603,
+          code: typeof code === 'number' ? code : -32603,
           message: error instanceof Error ? error.message : 'Internal error',
         },
       };

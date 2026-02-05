@@ -5,15 +5,21 @@ TypeScript bindings for **ZAP** (Zero-Copy App Proto) - high-performance Cap'n P
 ## Installation
 
 ```bash
-npm install @zap-protocol/zap
+npm install @zap-proto/zap
 # or
-pnpm add @zap-protocol/zap
+pnpm add @zap-proto/zap
+```
+
+For server-side usage with TCP transport, also install:
+
+```bash
+npm install ws
 ```
 
 ## Usage
 
 ```typescript
-import { Client } from '@zap-protocol/zap';
+import { Client } from '@zap-proto/zap';
 
 // Connect to ZAP server
 const client = await Client.connect('zap://localhost:9999');
@@ -33,7 +39,7 @@ await client.close();
 ## Server
 
 ```typescript
-import { Server } from '@zap-protocol/zap';
+import { Server } from '@zap-proto/zap';
 
 const server = new Server({
   name: 'my-agent',

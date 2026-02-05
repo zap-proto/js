@@ -9,6 +9,9 @@
 
 import { Protocol, MessageType, generateId, generateClientId } from './protocol.js';
 import { ZapError, ConnectionError, TimeoutError } from './error.js';
+import {
+  ClientType,
+} from './types.js';
 import type {
   ZapRequest,
   ZapResponse,
@@ -22,9 +25,7 @@ import type {
   Handshake,
   HandshakeResponse,
   ConnectionState,
-  ClientType,
   ZapEventHandler,
-  ErrorResult,
 } from './types.js';
 
 const DEFAULT_TIMEOUT = 30000;
@@ -92,6 +93,11 @@ export class ZapClient {
   /** Check if connected */
   get isConnected(): boolean {
     return this.state === 'connected' && this.ws?.readyState === WebSocket.OPEN;
+  }
+
+  /** Get server info from handshake */
+  get server(): HandshakeResponse | null {
+    return this.serverInfo;
   }
 
   /**
@@ -267,27 +273,37 @@ export class ZapClient {
 
   /** Navigate to URL */
   async navigate(url: string, tabId?: number): Promise<BrowserResult> {
-    return this.browser({ action: 1, url, tabId }); // BrowserAction.Navigate
+    const params: BrowserParams = { action: 1, url }; // BrowserAction.Navigate
+    if (tabId !== undefined) params.tabId = tabId;
+    return this.browser(params);
   }
 
   /** Click an element */
   async click(selector: string, tabId?: number): Promise<BrowserResult> {
-    return this.browser({ action: 10, selector, tabId }); // BrowserAction.Click
+    const params: BrowserParams = { action: 10, selector }; // BrowserAction.Click
+    if (tabId !== undefined) params.tabId = tabId;
+    return this.browser(params);
   }
 
   /** Fill an input */
   async fill(selector: string, value: string, tabId?: number): Promise<BrowserResult> {
-    return this.browser({ action: 12, selector, value, tabId }); // BrowserAction.Fill
+    const params: BrowserParams = { action: 12, selector, value }; // BrowserAction.Fill
+    if (tabId !== undefined) params.tabId = tabId;
+    return this.browser(params);
   }
 
   /** Evaluate JavaScript */
   async evaluate(code: string, tabId?: number): Promise<BrowserResult> {
-    return this.browser({ action: 20, code, tabId }); // BrowserAction.Evaluate
+    const params: BrowserParams = { action: 20, code }; // BrowserAction.Evaluate
+    if (tabId !== undefined) params.tabId = tabId;
+    return this.browser(params);
   }
 
   /** Take screenshot */
   async screenshot(fullPage = false, tabId?: number): Promise<BrowserResult> {
-    return this.browser({ action: 40, fullPage, tabId }); // BrowserAction.Screenshot
+    const params: BrowserParams = { action: 40, fullPage }; // BrowserAction.Screenshot
+    if (tabId !== undefined) params.tabId = tabId;
+    return this.browser(params);
   }
 
   /** Get tabs */

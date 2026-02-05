@@ -119,14 +119,15 @@ describe('ResourceNotFoundError', () => {
 
 describe('InvalidArgumentError', () => {
   it('should create an InvalidArgumentError', () => {
-    const error = new InvalidArgumentError('count');
-    // Message includes argument name
+    const error = new InvalidArgumentError('count', 'must be positive');
+    // Message includes argument name and reason
     expect(error.message).toContain('count');
+    expect(error.message).toContain('must be positive');
     expect(error.name).toBe('InvalidArgumentError');
   });
 
   it('should be instanceof ZapError', () => {
-    const error = new InvalidArgumentError('test');
+    const error = new InvalidArgumentError('test', 'invalid');
     expect(error).toBeInstanceOf(ZapError);
   });
 });
@@ -153,7 +154,7 @@ describe('Error inheritance chain', () => {
       new ServerError('test'),
       new ToolNotFoundError('test'),
       new ResourceNotFoundError('test'),
-      new InvalidArgumentError('test'),
+      new InvalidArgumentError('test', 'invalid'),
     ];
 
     for (const error of errors) {

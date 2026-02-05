@@ -5,7 +5,7 @@
  * As long as majority are honest, you get correct results.
  */
 
-import { Did } from './identity.js';
+import { Did, didUri } from './identity.js';
 
 /** Query ID (32-byte hash as hex string) */
 export type QueryId = string;
@@ -256,10 +256,6 @@ export class AgentConsensusVoting {
 }
 
 // Helper functions
-
-function didUri(did: Did): string {
-  return `did:${did.method}:${did.id}`;
-}
 
 function numberToBytes(n: number): Uint8Array {
   const buffer = new ArrayBuffer(8);

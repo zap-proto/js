@@ -10,18 +10,20 @@
  */
 
 import { ZapClient } from '../client.js';
-import { Protocol, MessageType, generateClientId } from '../protocol.js';
+import { Protocol, generateClientId } from '../protocol.js';
 import { ConnectionError, ZapError } from '../error.js';
 import {
   ClientType,
-  type ZapClientOptions,
-  type McpInfo,
-  type ToolInfo,
-  type Tool,
-  type ToolResult,
-  type BrowserAction,
-  type BrowserResult,
-  type ZapEventHandler,
+} from '../types.js';
+import type {
+  ZapClientOptions,
+  McpInfo,
+  ToolInfo,
+  Tool,
+  ToolResult,
+  BrowserAction,
+  BrowserResult,
+  ZapEventHandler,
 } from '../types.js';
 
 const DEFAULT_DISCOVERY_PORTS = [9999, 9998, 9997, 9996, 9995];
@@ -64,18 +66,17 @@ interface McpConnection {
  */
 export class ExtensionClient {
   private extensionId: string;
-  private browser: string;
-  private version: string;
+  private _browser: string;
+  private _version: string;
   private capabilities: string[];
   private mcpConnections = new Map<string, McpConnection>();
   private eventHandlers = new Map<string, Set<ZapEventHandler>>();
-  private protocol: Protocol;
   private options: ZapClientOptions;
 
   constructor(options: ExtensionClientOptions = {}) {
     this.extensionId = options.extensionId ?? generateClientId();
-    this.browser = options.browser ?? detectBrowser();
-    this.version = options.version ?? '1.0.0';
+    this._browser = options.browser ?? detectBrowser();
+    this._version = options.version ?? '1.0.0';
     this.capabilities = options.capabilities ?? [
       'tabs',
       'navigate',
@@ -84,7 +85,8 @@ export class ExtensionClient {
       'cookies',
       'storage',
     ];
-    this.protocol = new Protocol(options.binary ?? true);
+    // Protocol instance not currently used but kept for future streaming support
+    new Protocol(options.binary ?? true);
     this.options = {
       clientId: this.extensionId,
       clientType: ClientType.BrowserExtension,
@@ -95,6 +97,16 @@ export class ExtensionClient {
       maxReconnectAttempts: options.maxReconnectAttempts ?? 5,
       binary: options.binary ?? true,
     };
+  }
+
+  /** Get browser name */
+  get browser(): string {
+    return this._browser;
+  }
+
+  /** Get version */
+  get version(): string {
+    return this._version;
   }
 
   /** Get extension ID */
