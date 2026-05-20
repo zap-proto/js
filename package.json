@@ -1,8 +1,8 @@
 {
-  "name": "capnp-es",
+  "name": "zap-es",
   "version": "0.0.14",
-  "description": "TypeScript implementation of the Cap'n Proto serialization.",
-  "repository": "unjs/capnp-es",
+  "description": "TypeScript foundation for ZAP \u2014 Zero-copy Application Protocol. Cap'n-Proto-style binary serialization used by @hanzo/zap and @zap-proto/zap as the wire encoder.",
+  "repository": "hanzoai/zap-es",
   "license": "MIT",
   "sideEffects": false,
   "type": "module",
@@ -83,5 +83,14 @@
       "optional": true
     }
   },
-  "packageManager": "pnpm@10.33.4"
+  "packageManager": "pnpm@10.33.4",
+  "keywords": [
+    "zap",
+    "capnp",
+    "capnproto",
+    "serialization",
+    "binary",
+    "rpc",
+    "hanzo"
+  ]
 }

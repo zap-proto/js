@@ -1,3 +1,30 @@
+# zap-es
+
+> **TypeScript foundation for ZAP** — Zero-copy Application Protocol. This is
+> the wire encoder used by [`@hanzo/zap`](https://www.npmjs.com/package/@hanzo/zap)
+> and [`@zap-proto/zap`](https://www.npmjs.com/package/@zap-proto/zap) as the
+> Cap'n-Proto-style binary serializer. Fork of [`unjs/capnp-es`](https://github.com/unjs/capnp-es).
+
+[![npm version](https://img.shields.io/npm/v/zap-es)](https://npmjs.com/package/zap-es)
+
+## What
+
+`zap-es` is the TypeScript / browser / Workers serialization layer for the
+ZAP binary RPC protocol. It implements the Cap'n-Proto wire format with a
+modern ES module surface and a small, dependency-free runtime.
+
+ZAP framing (header + flags + capability table) lives on top of this; pure
+serialization lives here. Wire-compatible with the Rust impl in
+`hanzoai/zap` and the Go impl in `luxfi/zap`.
+
+## License
+
+MIT.
+
+---
+
+# Upstream README (unjs/capnp-es) ↓
+
 # 🔥 capnp-es
 
 <!-- automd:badges bundlephobia codecov -->
