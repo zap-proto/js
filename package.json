@@ -2,7 +2,7 @@
   "name": "zap-es",
   "version": "0.0.14",
   "description": "TypeScript foundation for ZAP \u2014 Zero-copy Application Protocol. Cap'n-Proto-style binary serialization used by @hanzo/zap and @zap-proto/zap as the wire encoder.",
-  "repository": "hanzoai/zap-es",
+  "repository": "zap-proto/zap-es",
   "license": "MIT",
   "sideEffects": false,
   "type": "module",
