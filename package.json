@@ -1,6 +1,6 @@
 {
   "name": "@zap-proto/zap",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "ZAP - Zero-Copy App Proto for AI agent communication",
   "type": "module",
   "main": "./dist/index.js",
@@ -42,7 +42,7 @@
   ],
   "scripts": {
     "build": "tsc",
-    "build:schema": "capnp-es schema/zap.capnp -ots",
+    "build:schema": "zapc schema/zap.zap --emit=ts --out=src/gen",
     "dev": "tsc --watch",
     "test": "vitest run",
     "test:watch": "vitest",
@@ -68,13 +68,12 @@
     "url": "https://github.com/zap-protocol/zap-js"
   },
   "homepage": "https://zap-protocol.github.io",
-  "dependencies": {
-    "capnp-es": "^0.0.14"
-  },
+  "dependencies": {},
   "devDependencies": {
     "@types/node": "^22.0.0",
     "@types/ws": "^8.5.13",
     "@vitest/coverage-v8": "^2.0.0",
+    "@zap-proto/zapc": "file:../zap/npm",
     "typescript": "^5.7.0",
     "vitest": "^2.0.0",
     "eslint": "^9.0.0",
