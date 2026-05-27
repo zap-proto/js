@@ -1,5 +1,8 @@
 # zap-es
 
+> **Docs:** [ZAP wire encoder for TS](https://zap-proto.dev/docs/sdks/typescript) · part of the [ZAP Protocol](https://zap-proto.io)
+
+
 > **TypeScript foundation for ZAP** — Zero-copy Application Protocol. This is
 > the wire encoder used by [`@hanzo/zap`](https://www.npmjs.com/package/@hanzo/zap)
 > and [`@zap-proto/zap`](https://www.npmjs.com/package/@zap-proto/zap) as the
