@@ -1,6 +1,6 @@
 # ZAP TypeScript
 
-> **Docs:** [ZAP TypeScript SDK](https://zap-proto.dev/docs/sdks/typescript) · part of the [ZAP Protocol](https://zap-proto.io)
+> **Docs:** [ZAP TypeScript SDK](https://zap-proto.dev/docs/sdks/typescript) · part of the [ZAP Protocol](https://zap-proto.io); also: [Native ZAP RPC](https://zap-proto.dev/docs/protocols/native)
 
 
 TypeScript bindings for **ZAP** (Zero-Copy App Proto) - high-performance Cap'n Proto RPC for AI agents.
