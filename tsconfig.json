@@ -1,23 +1,25 @@
 {
   "compilerOptions": {
-    "target": "ESNext",
+    "target": "ES2023",
     "module": "ESNext",
-    "moduleResolution": "Node",
-    "esModuleInterop": true,
+    "moduleResolution": "Bundler",
+    "lib": ["ES2023"],
+    "types": ["node"],
     "strict": true,
+    "noUnusedLocals": true,
+    "noUnusedParameters": true,
+    "noImplicitOverride": true,
+    "noFallthroughCasesInSwitch": true,
+    "exactOptionalPropertyTypes": false,
+    "esModuleInterop": true,
+    "forceConsistentCasingInFileNames": true,
     "skipLibCheck": true,
+    "declaration": true,
     "noEmit": true,
-    "allowImportingTsExtensions": true,
+    "verbatimModuleSyntax": true,
     "paths": {
-      "@zap-proto/zap": ["./src/index.ts"],
-      "@zap-proto/zap/rpc": ["./src/rpc/index.ts"],
-      "@zap-proto/zap/compiler": ["./src/compiler/index.ts"],
-      "@zap-proto/zap/codec/capnp/*": ["./src/codec/capnp/*.ts"],
-      "@zap-proto/zap/debug": ["./src/debug/index.ts"],
-      "src/*": ["./src/*"],
-      "test/*": ["./test/*"]
+      "@zap-proto/zap": ["./src/index.ts"]
     }
   },
-  "include": ["src", "test", "playground"],
-  "exclude": ["**/*.d.ts"]
+  "include": ["src", "test"]
 }

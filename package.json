@@ -1,104 +1,35 @@
 {
   "name": "@zap-proto/zap",
-  "version": "1.1.0",
-  "description": "The ZAP foundation layer for TypeScript — Cap'n-Proto wire codec + Level-4 RPC primitives. The wire underneath @zap-proto/mcp and the rest of the ZAP protocol family.",
-  "repository": "zap-proto/ts",
-  "homepage": "https://zap-proto.dev/docs/sdks/typescript",
+  "version": "0.1.0",
+  "description": "Native ZAP (Zero-copy Application Protocol) TypeScript wire runtime. Zero dependencies, zero Cap'n Proto; byte-compatible with github.com/zap-proto/go and the luxfi/zap transport. Lives at github.com/zap-proto/ts; published as @zap-proto/zap.",
   "license": "MIT",
-  "sideEffects": false,
+  "repository": "zap-proto/ts",
   "type": "module",
+  "sideEffects": false,
   "exports": {
     ".": {
-      "types": "./dist/index.d.mts",
-      "default": "./dist/index.mjs"
-    },
-    "./rpc": {
-      "types": "./dist/rpc/index.d.mts",
-      "default": "./dist/rpc/index.mjs"
-    },
-    "./compiler": {
-      "types": "./dist/compiler/index.d.mts",
-      "default": "./dist/compiler/index.mjs"
-    },
-    "./codec/capnp/*": {
-      "types": "./dist/codec/capnp/*.d.mts",
-      "default": "./dist/codec/capnp/*.mjs"
-    },
-    "./debug": {
-      "types": "./dist/debug/index.d.mts",
-      "default": "./dist/debug/index.mjs"
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js",
+      "default": "./dist/index.js"
     }
   },
-  "main": "./dist/index.mjs",
-  "module": "./dist/index.mjs",
-  "types": "./dist/index.d.mts",
-  "bin": {
-    "capnpc-js": "./dist/compiler/capnpc-js.mjs",
-    "capnpc-dts": "./dist/compiler/capnpc-dts.mjs",
-    "capnpc-ts": "./dist/compiler/capnpc-ts.mjs"
-  },
+  "main": "./dist/index.js",
+  "module": "./dist/index.js",
+  "types": "./dist/index.d.ts",
   "files": [
-    "dist"
+    "dist",
+    "src"
   ],
   "scripts": {
-    "bench:bun": "bun run ./test/bench/bench.ts",
-    "bench:node": "node --import jiti/register ./test/bench/bench.ts",
-    "build": "pnpm build:std && unbuild",
-    "build:std": "unbuild --stub && pnpm capnpc src/codec/capnp/_capnp/*.capnp --src-prefix=src/codec/capnp/_capnp -ots:./src/codec/capnp && prettier -w ./src/codec/capnp",
-    "capnpc": "jiti ./src/compiler/capnpc-js.ts",
-    "dev": "vitest dev",
-    "lint": "eslint . && prettier -c .",
-    "lint:fix": "automd && eslint . --fix && prettier -w .",
-    "prepack": "pnpm build",
-    "play": "pnpm capnpc -ots,js,dts playground/*.capnp",
-    "profile:bun": "bun run ./test/bench/profile.ts",
-    "profile:node": "node --cpu-prof --import jiti/register ./test/bench/profile.ts",
-    "release": "pnpm test && changelogen --release && npm publish && git push --follow-tags",
-    "test": "pnpm lint && vitest run --coverage && pnpm test:types",
-    "test:types": "tsc --noEmit --skipLibCheck"
+    "build": "tsup src/index.ts --format esm --dts --clean",
+    "prepare": "tsup src/index.ts --format esm --dts --clean",
+    "typecheck": "tsc --noEmit",
+    "test": "vitest run"
   },
   "devDependencies": {
-    "@types/benchmark": "^2.1.5",
-    "@types/hex2dec": "^1.1.4",
-    "@types/node": "^22.19.19",
-    "@vitest/coverage-v8": "^4.1.6",
-    "automd": "^0.4.3",
-    "benchmark": "^2.1.4",
-    "capnp-ts": "^0.7.0",
-    "changelogen": "^0.6.2",
-    "esbuild": "^0.28.0",
-    "eslint": "^9.39.4",
-    "eslint-config-unjs": "^0.6.2",
-    "hex2dec": "^1.1.2",
-    "jiti": "^2.7.0",
-    "mitata": "^1.0.34",
-    "prettier": "^3.8.3",
-    "protobufjs": "^8.3.0",
+    "@types/node": "^22.0.0",
+    "tsup": "^8.5.1",
     "typescript": "^5.9.3",
-    "unbuild": "^3.6.1",
-    "vite-tsconfig-paths": "^6.1.1",
-    "vitest": "^4.1.6"
-  },
-  "peerDependencies": {
-    "typescript": "^5.7.3"
-  },
-  "peerDependenciesMeta": {
-    "typescript": {
-      "optional": true
-    }
-  },
-  "packageManager": "pnpm@10.33.4",
-  "publishConfig": {
-    "access": "public"
-  },
-  "keywords": [
-    "zap",
-    "zap-proto",
-    "capnp",
-    "capnproto",
-    "serialization",
-    "zero-copy",
-    "rpc",
-    "codec"
-  ]
+    "vitest": "^4.1.4"
+  }
 }
