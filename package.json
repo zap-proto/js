@@ -1,0 +1,96 @@
+{
+  "name": "zap-es",
+  "version": "0.0.14",
+  "description": "TypeScript foundation for ZAP \u2014 Zero-copy Application Protocol. Cap'n-Proto-style binary serialization used by @hanzo/zap and @zap-proto/zap as the wire encoder.",
+  "repository": "zap-proto/zap-es",
+  "license": "MIT",
+  "sideEffects": false,
+  "type": "module",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.mts",
+      "default": "./dist/index.mjs"
+    },
+    "./compiler": {
+      "types": "./dist/compiler/index.d.mts",
+      "default": "./dist/compiler/index.mjs"
+    },
+    "./capnp/*": {
+      "types": "./dist/capnp/*.d.mts",
+      "default": "./dist/capnp/*.mjs"
+    },
+    "./debug": {
+      "types": "./dist/debug/index.d.mts",
+      "default": "./dist/debug/index.mjs"
+    }
+  },
+  "main": "./dist/index.mjs",
+  "module": "./dist/index.mjs",
+  "types": "./dist/index.d.mts",
+  "bin": {
+    "capnp-es": "./dist/compiler/capnpc-js.mjs",
+    "capnpc-js": "./dist/compiler/capnpc-js.mjs",
+    "capnpc-dts": "./dist/compiler/capnpc-dts.mjs",
+    "capnpc-ts": "./dist/compiler/capnpc-ts.mjs"
+  },
+  "files": [
+    "dist"
+  ],
+  "scripts": {
+    "bench:bun": "bun run ./test/bench/bench.ts",
+    "bench:node": "node --import jiti/register ./test/bench/bench.ts",
+    "build": "pnpm build:std && unbuild",
+    "build:std": "unbuild --stub && pnpm capnp-es src/capnp/_capnp/*.capnp --src-prefix=src/capnp/_capnp -ots:./src/capnp && prettier -w ./src/capnp",
+    "capnp-es": "jiti ./src/compiler/capnpc-js.ts",
+    "dev": "vitest dev",
+    "lint": "eslint . && prettier -c .",
+    "lint:fix": "automd && eslint . --fix && prettier -w .",
+    "prepack": "pnpm build",
+    "play": "pnpm capnp-es -ots,js,dts playground/*.capnp",
+    "profile:bun": "bun run ./test/bench/profile.ts",
+    "profile:node": "node --cpu-prof --import jiti/register ./test/bench/profile.ts",
+    "release": "pnpm test && changelogen --release && npm publish && git push --follow-tags",
+    "test": "pnpm lint && vitest run --coverage && pnpm test:types",
+    "test:types": "tsc --noEmit --skipLibCheck"
+  },
+  "devDependencies": {
+    "@types/benchmark": "^2.1.5",
+    "@types/hex2dec": "^1.1.4",
+    "@types/node": "^22.19.19",
+    "@vitest/coverage-v8": "^4.1.6",
+    "automd": "^0.4.3",
+    "benchmark": "^2.1.4",
+    "capnp-ts": "^0.7.0",
+    "changelogen": "^0.6.2",
+    "esbuild": "^0.28.0",
+    "eslint": "^9.39.4",
+    "eslint-config-unjs": "^0.6.2",
+    "hex2dec": "^1.1.2",
+    "jiti": "^2.7.0",
+    "mitata": "^1.0.34",
+    "prettier": "^3.8.3",
+    "protobufjs": "^8.3.0",
+    "typescript": "^5.9.3",
+    "unbuild": "^3.6.1",
+    "vite-tsconfig-paths": "^6.1.1",
+    "vitest": "^4.1.6"
+  },
+  "peerDependencies": {
+    "typescript": "^5.7.3"
+  },
+  "peerDependenciesMeta": {
+    "typescript": {
+      "optional": true
+    }
+  },
+  "packageManager": "pnpm@10.33.4",
+  "keywords": [
+    "zap",
+    "capnp",
+    "capnproto",
+    "serialization",
+    "binary",
+    "rpc",
+    "hanzo"
+  ]
+}
