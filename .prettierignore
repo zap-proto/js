@@ -1,0 +1,10 @@
+CHANGELOG.md
+pnpm-lock.yaml
+
+test/fixtures/*.*
+
+playground/*.ts
+playground/*.d.ts
+playground/*.js
+
+src/capnp/*.ts
