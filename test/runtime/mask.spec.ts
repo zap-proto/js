@@ -15,7 +15,7 @@ import {
   getUint32Mask,
   getUint64Mask,
   getUint8Mask,
-} from "src/serialization/mask";
+} from "src/codec/serialization/mask";
 
 type MaskArray<T> = Array<{ mask: number[]; val: T }>;
 

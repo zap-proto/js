@@ -1,6 +1,6 @@
 // Based on https://github.com/jdiaz5513/capnp-ts (MIT - Julián Díaz)
 
-import { Struct } from "../serialization/pointers/struct";
+import { Struct } from "../codec/serialization/pointers/struct";
 import { Answer } from "./answer";
 import { Conn } from "./conn";
 import { Method } from "./method";
@@ -10,9 +10,9 @@ import { Call } from "./call";
 import { clientFromResolution } from "./client";
 import { newMessage } from "./capability";
 import { transformToPromisedAnswer } from "./promised-answer";
-import { Pointer } from "../serialization/pointers/pointer";
+import { Pointer } from "../codec/serialization/pointers/pointer";
 import { NOT_IMPLEMENTED, RPC_FULFILL_ALREADY_CALLED } from "../errors";
-import { getAs } from "../serialization/pointers/struct.utils";
+import { getAs } from "../codec/serialization/pointers/struct.utils";
 
 export enum QuestionState {
   IN_PROGRESS,

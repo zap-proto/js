@@ -1,12 +1,12 @@
 // Based on https://github.com/jdiaz5513/capnp-ts (MIT - Julián Díaz)
 
-import { MAX_DEPTH } from "../../constants";
-import { format } from "../../util";
+import { MAX_DEPTH } from "../../../constants";
+import { format } from "../../../util";
 import { Segment } from "../segment";
 import {
   PTR_DEPTH_LIMIT_EXCEEDED,
   PTR_OFFSET_OUT_OF_BOUNDS,
-} from "../../errors";
+} from "../../../errors";
 import { dump, trackPointerAllocation } from "./pointer.utils";
 
 export interface _PointerCtor {

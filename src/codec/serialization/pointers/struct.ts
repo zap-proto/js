@@ -1,6 +1,6 @@
 // Based on https://github.com/jdiaz5513/capnp-ts (MIT - Julián Díaz)
 
-import { MAX_DEPTH } from "../../constants";
+import { MAX_DEPTH } from "../../../constants";
 import { ObjectSize } from "../object-size";
 import { Segment } from "../segment";
 import { _Pointer, _PointerCtor, Pointer } from "./pointer";

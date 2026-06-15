@@ -1,6 +1,6 @@
 // Based on https://github.com/jdiaz5513/capnp-ts (MIT - Julián Díaz)
 
-import { Struct, StructCtor } from "../serialization/pointers/struct";
+import { Struct, StructCtor } from "../codec/serialization/pointers/struct";
 
 // A Method identifies a method along with an optional
 // human-readable description of the method

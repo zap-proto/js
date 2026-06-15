@@ -9,7 +9,7 @@ import {
   getZeroByteCount,
   pack,
   unpack,
-} from "src/serialization/packing";
+} from "src/codec/serialization/packing";
 
 type Word = [number, number, number, number, number, number, number, number];
 type TagData = { tag: number; weight: number; word: Word }[];

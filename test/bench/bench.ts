@@ -1,7 +1,7 @@
 import { readFile } from "node:fs/promises";
 import { fileURLToPath } from "node:url";
 import { group, bench, run, summary } from "mitata";
-import * as capnpES from "capnp-es";
+import * as capnpES from "@zap-proto/zap";
 
 // JSON
 const decoder = new TextDecoder();
@@ -21,7 +21,7 @@ const jsonBuffBench = {
   traverse: () => traverseData(JSON.parse(decoder.decode(jsonData))),
 };
 
-// capnp-es
+// -proto/zap
 const { AddressBook: capnpESStruct } = await import("./data/capnp/schema.ts");
 const capnpData = new Uint8Array(
   await readFile(new URL("data/capnp/data.bin", import.meta.url)),
@@ -96,7 +96,7 @@ function traverseData(obj: any, capnpTSCompat = false) {
 
 // All benchmarks
 const benchmarks = {
-  "capnp-es": capnpESBench,
+  "@zap-proto/zap": capnpESBench,
   "capnp-ts": capnpTSBench,
   "JSON.parse(<string>)": jsonStrBench,
   "JSON.parse(<buffer>)": jsonBuffBench,

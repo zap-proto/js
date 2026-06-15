@@ -1,13 +1,16 @@
 // Based on https://github.com/jdiaz5513/capnp-ts (MIT - Julián Díaz)
 
 import { PipelineClient } from "./pipeline-client";
-import { Struct, StructCtor } from "../serialization/pointers/struct";
+import { Struct, StructCtor } from "../codec/serialization/pointers/struct";
 import { Answer } from "./answer";
 import { PipelineOp } from "./pipeline-op";
 import { transformPtr } from "./transform-ptr";
-import { Pointer } from "../serialization/pointers/pointer";
-import { copyFrom } from "../serialization/pointers/pointer.utils";
-import { getAs, initStruct } from "../serialization/pointers/struct.utils";
+import { Pointer } from "../codec/serialization/pointers/pointer";
+import { copyFrom } from "../codec/serialization/pointers/pointer.utils";
+import {
+  getAs,
+  initStruct,
+} from "../codec/serialization/pointers/struct.utils";
 
 // TODO: figure out if we can respect no-any.
 // It doesn't appear so because PipelineOp has just

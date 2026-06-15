@@ -4,8 +4,8 @@ import {
   LIST_SIZE_MASK,
   POINTER_DOUBLE_FAR_MASK,
   POINTER_TYPE_MASK,
-} from "../../constants";
-import { bufferToHex, format, padToWord } from "../../util";
+} from "../../../constants";
+import { bufferToHex, format, padToWord } from "../../../util";
 import { ListElementSize } from "../list-element-size";
 import {
   ObjectSize,
@@ -27,7 +27,7 @@ import {
   PTR_WRONG_POINTER_TYPE,
   PTR_WRONG_LIST_TYPE,
   INVARIANT_UNREACHABLE_CODE,
-} from "../../errors";
+} from "../../../errors";
 import { Pointer, PointerType } from "./pointer";
 
 export function adopt<T extends Pointer>(src: Orphan<T>, p: T): void {

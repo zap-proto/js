@@ -1,12 +1,12 @@
 // Based on https://github.com/jdiaz5513/capnp-ts (MIT - Julián Díaz)
 
-import { Struct } from "../serialization/pointers/struct";
+import { Struct } from "../codec/serialization/pointers/struct";
 import { Call } from "./call";
 import { Answer } from "./answer";
 import { PipelineOp } from "./pipeline-op";
 import { ErrorClient } from "./error-client";
 import { transformPtr } from "./transform-ptr";
-import { getInterfaceClientOrNull } from "../serialization/pointers/struct.utils";
+import { getInterfaceClientOrNull } from "../codec/serialization/pointers/struct.utils";
 
 // A Client represents an Cap'n Proto interface type.
 export interface Client {

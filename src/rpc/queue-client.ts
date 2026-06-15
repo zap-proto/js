@@ -9,14 +9,14 @@ import {
   isLocalCall,
   isDisembargo,
 } from "./answer";
-import { Struct } from "../serialization";
+import { Struct } from "../codec/serialization";
 import { Fulfiller } from "./fulfiller/fulfiller";
 import { copyCall, Call } from "./call";
 import { ErrorAnswer } from "./error-answer";
 import { Queue } from "./queue";
 import { Qcalls, QCallSlot } from "./qcalls";
 import { RPC_CALL_QUEUE_FULL } from "../errors";
-import { MessageTarget, Disembargo_Context_Which } from "../capnp/rpc";
+import { MessageTarget, Disembargo_Context_Which } from "../codec/capnp/rpc";
 import { newDisembargoMessage } from "./capability";
 import { joinAnswer } from "./join";
 

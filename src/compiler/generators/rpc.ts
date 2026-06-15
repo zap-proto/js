@@ -1,4 +1,4 @@
-import * as schema from "../../capnp/schema";
+import * as schema from "../../codec/capnp/schema";
 import { generateNode } from ".";
 import type { CodeGeneratorFileContext } from ".";
 import {

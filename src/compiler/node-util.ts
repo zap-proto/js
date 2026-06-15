@@ -1,6 +1,6 @@
 // Based on https://github.com/jdiaz5513/capnp-ts (MIT - Julián Díaz)
 
-import * as schema from "../capnp/schema";
+import * as schema from "../codec/capnp/schema";
 import { format } from "../util";
 
 import { CodeGeneratorFileContext } from "./generators";

@@ -2,7 +2,7 @@
 
 import { Conn } from "./conn";
 import { Client } from "./client";
-import { Struct } from "../serialization/pointers/struct";
+import { Struct } from "../codec/serialization/pointers/struct";
 import { Call } from "./call";
 import { Answer } from "./answer";
 import { ErrorAnswer } from "./error-answer";

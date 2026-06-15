@@ -1,4 +1,4 @@
-import * as schema from "../../capnp/schema";
+import * as schema from "../../codec/capnp/schema";
 import {
   getDisplayNamePrefix,
   getFullClassName,
@@ -19,7 +19,7 @@ import {
   testWhich,
   getUint16,
   getPointer,
-} from "../../serialization/pointers/struct.utils";
+} from "../../codec/serialization/pointers/struct.utils";
 import * as capnp from "../..";
 import { format, pad } from "../../util";
 

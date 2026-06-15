@@ -1,8 +1,8 @@
 // Based on https://github.com/jdiaz5513/capnp-ts (MIT - Julián Díaz)
 
 import { PipelineOp } from "./pipeline-op";
-import { PromisedAnswer, PromisedAnswer_Op } from "../capnp/rpc";
-import { List } from "../serialization/pointers/list/list";
+import { PromisedAnswer, PromisedAnswer_Op } from "../codec/capnp/rpc";
+import { List } from "../codec/serialization/pointers/list/list";
 
 export function transformToPromisedAnswer(
   answer: PromisedAnswer,

@@ -1,8 +1,12 @@
 // Based on https://github.com/jdiaz5513/capnp-ts (MIT - Julián Díaz)
 
-import { Message as RPCMessage } from "../capnp/rpc";
-import { Message } from "../serialization/message";
-import { Return, Exception, Disembargo_Context_Which } from "../capnp/rpc";
+import { Message as RPCMessage } from "../codec/capnp/rpc";
+import { Message } from "../codec/serialization/message";
+import {
+  Return,
+  Exception,
+  Disembargo_Context_Which,
+} from "../codec/capnp/rpc";
 import { toException } from "./rpc-error";
 import { INVARIANT_UNREACHABLE_CODE } from "../errors";
 

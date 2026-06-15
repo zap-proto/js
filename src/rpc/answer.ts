@@ -1,16 +1,16 @@
 // Based on https://github.com/jdiaz5513/capnp-ts (MIT - Julián Díaz)
 
-import { Struct } from "../serialization/pointers/struct";
+import { Struct } from "../codec/serialization/pointers/struct";
 import { PipelineOp } from "./pipeline-op";
 import { Call, copyCall } from "./call";
 import { Conn } from "./conn";
 import { Deferred } from "./deferred";
-import { MessageTarget } from "../capnp/rpc";
+import { MessageTarget } from "../codec/capnp/rpc";
 import { Fulfiller } from "./fulfiller/fulfiller";
 import { newReturnMessage, setReturnException } from "./capability";
-import { Pointer } from "../serialization/pointers/pointer";
+import { Pointer } from "../codec/serialization/pointers/pointer";
 import { transformPtr } from "./transform-ptr";
-import { Interface } from "../serialization/pointers/interface";
+import { Interface } from "../codec/serialization/pointers/interface";
 import {
   INVARIANT_UNREACHABLE_CODE,
   RPC_CALL_QUEUE_FULL,

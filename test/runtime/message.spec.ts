@@ -3,12 +3,12 @@
 import { test, assert as t } from "vitest";
 import { compareBuffers, readFileBuffer } from "test/utils";
 import * as C from "src/constants";
-import { Message } from "src/serialization";
-import { MultiSegmentArena } from "src/serialization/arena";
+import { Message } from "src/codec/serialization";
+import { MultiSegmentArena } from "src/codec/serialization/arena";
 import {
   getFramedSegments,
   preallocateSegments,
-} from "src/serialization/message";
+} from "src/codec/serialization/message";
 
 import { Person } from "test/fixtures/serialization-demo";
 

@@ -3,7 +3,7 @@
 import { Client } from "./client";
 import { RefCount } from "./refcount";
 import { Finalize } from "./finalize";
-import { Struct } from "../serialization/pointers/struct";
+import { Struct } from "../codec/serialization/pointers/struct";
 import { Call } from "./call";
 import { Answer } from "./answer";
 

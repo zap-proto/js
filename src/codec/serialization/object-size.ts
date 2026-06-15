@@ -1,6 +1,6 @@
 // Based on https://github.com/jdiaz5513/capnp-ts (MIT - Julián Díaz)
 
-import * as util from "../util";
+import * as util from "../../util";
 
 /**
  * A simple object that describes the size of a struct.
