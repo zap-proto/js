@@ -3,9 +3,9 @@
 import {
   DEFAULT_BUFFER_SIZE,
   MIN_SINGLE_SEGMENT_GROWTH,
-} from "../../constants";
-import { SEG_GET_NON_ZERO_SINGLE, SEG_NOT_WORD_ALIGNED } from "../../errors";
-import { format, padToWord } from "../../util";
+} from "../../../constants";
+import { SEG_GET_NON_ZERO_SINGLE, SEG_NOT_WORD_ALIGNED } from "../../../errors";
+import { format, padToWord } from "../../../util";
 import { Segment } from "../segment";
 import { ArenaAllocationResult } from "./arena-allocation-result";
 import { ArenaKind } from "./arena-kind";

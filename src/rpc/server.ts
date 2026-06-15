@@ -1,8 +1,8 @@
 // Based on https://github.com/jdiaz5513/capnp-ts (MIT - Julián Díaz)
 
 import { Method } from "./method";
-import { Struct } from "../serialization/pointers/struct";
-import { Message } from "../serialization/message";
+import { Struct } from "../codec/serialization/pointers/struct";
+import { Message } from "../codec/serialization/message";
 import { DataCall, Call, copyCall } from "./call";
 import { Fulfiller } from "./fulfiller/fulfiller";
 import { Client } from "./client";

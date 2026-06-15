@@ -1,13 +1,13 @@
 // Based on https://github.com/jdiaz5513/capnp-ts (MIT - Julián Díaz)
 
-import { DEFAULT_TRAVERSE_LIMIT, DEFAULT_BUFFER_SIZE } from "../constants";
+import { DEFAULT_TRAVERSE_LIMIT, DEFAULT_BUFFER_SIZE } from "../../constants";
 import {
   MSG_INVALID_FRAME_HEADER,
   MSG_SEGMENT_OUT_OF_BOUNDS,
   MSG_SEGMENT_TOO_SMALL,
-} from "../errors";
-import type { Client } from "../rpc/client";
-import { dumpBuffer, format, padToWord } from "../util";
+} from "../../errors";
+import type { Client } from "../../rpc/client";
+import { dumpBuffer, format, padToWord } from "../../util";
 import {
   AnyArena,
   Arena,

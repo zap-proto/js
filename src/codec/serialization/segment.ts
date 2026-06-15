@@ -1,8 +1,11 @@
 // Based on https://github.com/jdiaz5513/capnp-ts (MIT - Julián Díaz)
 
-import { MAX_SEGMENT_LENGTH, NATIVE_LITTLE_ENDIAN } from "../constants";
-import { SEG_REPLACEMENT_BUFFER_TOO_SMALL, SEG_SIZE_OVERFLOW } from "../errors";
-import { format, padToWord } from "../util";
+import { MAX_SEGMENT_LENGTH, NATIVE_LITTLE_ENDIAN } from "../../constants";
+import {
+  SEG_REPLACEMENT_BUFFER_TOO_SMALL,
+  SEG_SIZE_OVERFLOW,
+} from "../../errors";
+import { format, padToWord } from "../../util";
 import { Message } from "./message";
 import { Pointer } from "./pointers";
 

@@ -3,7 +3,7 @@
 import { Client } from "../client";
 import { Queue } from "../queue";
 import { Ecalls, ecallSlot } from "./ecalls";
-import { Struct } from "../../serialization/pointers/struct";
+import { Struct } from "../../codec/serialization/pointers/struct";
 import { Fulfiller } from "./fulfiller";
 import { Answer } from "../answer";
 import { Call, copyCall } from "../call";

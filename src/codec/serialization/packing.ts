@@ -1,7 +1,7 @@
 // Based on https://github.com/jdiaz5513/capnp-ts (MIT - Julián Díaz)
 
-import { PACK_SPAN_THRESHOLD } from "../constants";
-import { MSG_PACK_NOT_WORD_ALIGNED } from "../errors";
+import { PACK_SPAN_THRESHOLD } from "../../constants";
+import { MSG_PACK_NOT_WORD_ALIGNED } from "../../errors";
 
 /**
  * When packing a message there are two tags that are interpreted in a special way: `0x00` and `0xff`.

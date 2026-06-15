@@ -9,7 +9,7 @@ import { existsSync } from "node:fs";
 /**
  * Main entry point for the Cap'n Proto compiler CLI tools.
  * It handles two modes of operation:
- * 1. When invoked directly (via capnp-es), it parses command-line arguments and executes the Cap'n Proto compiler
+ * 1. When invoked directly (via capnpc), it parses command-line arguments and executes the Cap'n Proto compiler
  * 2. When invoked as a plugin, it reads schema data from stdin
  *
  * The function compiles the Cap'n Proto schema into JavaScript, TypeScript, or TypeScript declaration files
@@ -35,7 +35,7 @@ export async function cliMain(outFormat: "js" | "ts" | "dts") {
       dts: outFormats.includes("dts"),
     });
     (await writeFiles(files, outDir)).map((file) =>
-      console.log(`[capnp-es] ${file}`),
+      console.log(`[capnpc] ${file}`),
     );
   } catch (error) {
     console.error(error);
@@ -102,7 +102,7 @@ async function execCapnpc(
 ): Promise<Buffer> {
   // Uses -o- to output to stdout
   const cmd = `capnpc -o- ${options.join(" ")} ${sources.join(" ")}`;
-  console.log(`[capnp-es] ${cmd}`);
+  console.log(`[capnpc] ${cmd}`);
   return new Promise<Buffer>((resolve) => {
     exec(cmd, { encoding: "buffer" }, (error, stdout, stderr) => {
       if (stderr.length > 0) {
@@ -194,7 +194,7 @@ const capnpcOptions = [
 ];
 
 const usage = `
-Usage: capnp-es [<option>...] <source>...
+Usage: capnpc [<option>...] <source>...
 
 Compiles Cap'n Proto schema files and generates corresponding source code for javascript and typescript.
 

@@ -3,7 +3,7 @@
 import { Client } from "./client";
 import { RPC_NULL_CLIENT } from "../errors";
 import { Answer } from "./answer";
-import { Struct } from "../serialization/pointers/struct";
+import { Struct } from "../codec/serialization/pointers/struct";
 import { Call } from "./call";
 import { ErrorAnswer } from "./error-answer";
 

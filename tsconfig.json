@@ -9,9 +9,11 @@
     "noEmit": true,
     "allowImportingTsExtensions": true,
     "paths": {
-      "capnp-es": ["./src/index.ts"],
-      "capnp-es/compiler": ["./src/compiler/index.ts"],
-      "capnp-es/capnp/*": ["./src/capnp/*.ts"],
+      "@zap-proto/zap": ["./src/index.ts"],
+      "@zap-proto/zap/rpc": ["./src/rpc/index.ts"],
+      "@zap-proto/zap/compiler": ["./src/compiler/index.ts"],
+      "@zap-proto/zap/codec/capnp/*": ["./src/codec/capnp/*.ts"],
+      "@zap-proto/zap/debug": ["./src/debug/index.ts"],
       "src/*": ["./src/*"],
       "test/*": ["./test/*"]
     }

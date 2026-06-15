@@ -2,8 +2,8 @@
 
 import { MessagePort, MessageChannel } from "node:worker_threads";
 import { Deferred, Conn } from "src/rpc";
-import { Message } from "capnp-es";
-import { Message as RPCMessage } from "src/capnp/rpc";
+import { Message } from "@zap-proto/zap";
+import { Message as RPCMessage } from "src/codec/capnp/rpc";
 import { DeferredTransport } from "src/rpc/transport/deferred-transport";
 
 export class TestRPC {

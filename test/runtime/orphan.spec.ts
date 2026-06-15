@@ -2,8 +2,8 @@
 
 import { test, assert as t } from "vitest";
 
-import { Message, ObjectSize, Orphan, Struct, utils } from "capnp-es";
-import { Int32List } from "src/serialization";
+import { Message, ObjectSize, Orphan, Struct, utils } from "@zap-proto/zap";
+import { Int32List } from "src/codec/serialization";
 
 /** Just a silly struct that holds a single pointer to... itself? */
 

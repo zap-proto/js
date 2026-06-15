@@ -1,4 +1,4 @@
-import * as schema from "../../capnp/schema";
+import * as schema from "../../codec/capnp/schema";
 import {
   getDisplayNamePrefix,
   getFullClassName,

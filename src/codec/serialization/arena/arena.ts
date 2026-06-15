@@ -1,6 +1,6 @@
 // Based on https://github.com/jdiaz5513/capnp-ts (MIT - Julián Díaz)
 
-import { assertNever } from "../../errors";
+import { assertNever } from "../../../errors";
 import { Segment } from "../segment";
 import { AnyArena } from "./any-arena";
 import { ArenaAllocationResult } from "./arena-allocation-result";

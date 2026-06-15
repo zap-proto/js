@@ -1,10 +1,10 @@
 // Based on https://github.com/jdiaz5513/capnp-ts (MIT - Julián Díaz)
 
-import { Struct } from "../serialization/pointers/struct";
-import { Pointer } from "../serialization/pointers/pointer";
-import { Message } from "../serialization/message";
+import { Struct } from "../codec/serialization/pointers/struct";
+import { Pointer } from "../codec/serialization/pointers/pointer";
+import { Message } from "../codec/serialization/message";
 import { Method } from "./method";
-import { initStruct } from "../serialization/pointers/struct.utils";
+import { initStruct } from "../codec/serialization/pointers/struct.utils";
 
 // The Call type holds the record for an outgoing interface call.
 export type Call<P extends Struct, R extends Struct> =

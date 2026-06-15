@@ -2,14 +2,14 @@
 
 import { test, assert as t } from "vitest";
 
-import * as capnp from "capnp-es";
+import * as capnp from "@zap-proto/zap";
 import { compareBuffers, readFileBuffer } from "test/utils";
 import {
   AddressBook,
   Person,
   Person_Employment_Which,
 } from "test/fixtures/serialization-demo";
-import { isNull } from "src/serialization/pointers/pointer.utils";
+import { isNull } from "src/codec/serialization/pointers/pointer.utils";
 
 const SERIALIZATION_DEMO = readFileBuffer(
   "test/fixtures/data/serialization-demo.bin",

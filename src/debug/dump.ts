@@ -1,4 +1,4 @@
-import type { Message, Struct } from "capnp-es";
+import type { Message, Struct } from "@zap-proto/zap";
 import { spawn } from "node:child_process";
 import { existsSync } from "node:fs";
 

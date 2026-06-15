@@ -1,4 +1,4 @@
-import * as schema from "../../capnp/schema";
+import * as schema from "../../codec/capnp/schema";
 import { format } from "../../util";
 import * as E from "../errors";
 import { lookupNode, getFullClassName } from "../node-util";

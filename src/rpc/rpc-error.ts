@@ -1,7 +1,7 @@
 // Based on https://github.com/jdiaz5513/capnp-ts (MIT - Julián Díaz)
 
 import { RPC_ERROR } from "../errors";
-import { Exception } from "../capnp/rpc";
+import { Exception } from "../codec/capnp/rpc";
 import { format } from "../util";
 
 export class RPCError extends Error {

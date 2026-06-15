@@ -1,8 +1,9 @@
 {
-  "name": "zap-es",
-  "version": "0.0.14",
-  "description": "TypeScript foundation for ZAP \u2014 Zero-copy Application Protocol. Cap'n-Proto-style binary serialization used by @hanzo/zap and @zap-proto/zap as the wire encoder.",
-  "repository": "zap-proto/zap-es",
+  "name": "@zap-proto/zap",
+  "version": "2.0.0",
+  "description": "The ZAP foundation layer for TypeScript — Cap'n-Proto wire codec + Level-4 RPC primitives. The wire underneath @zap-proto/mcp and the rest of the ZAP protocol family.",
+  "repository": "zap-proto/ts",
+  "homepage": "https://zap-proto.dev/docs/sdks/typescript",
   "license": "MIT",
   "sideEffects": false,
   "type": "module",
@@ -11,13 +12,17 @@
       "types": "./dist/index.d.mts",
       "default": "./dist/index.mjs"
     },
+    "./rpc": {
+      "types": "./dist/rpc/index.d.mts",
+      "default": "./dist/rpc/index.mjs"
+    },
     "./compiler": {
       "types": "./dist/compiler/index.d.mts",
       "default": "./dist/compiler/index.mjs"
     },
-    "./capnp/*": {
-      "types": "./dist/capnp/*.d.mts",
-      "default": "./dist/capnp/*.mjs"
+    "./codec/capnp/*": {
+      "types": "./dist/codec/capnp/*.d.mts",
+      "default": "./dist/codec/capnp/*.mjs"
     },
     "./debug": {
       "types": "./dist/debug/index.d.mts",
@@ -28,7 +33,6 @@
   "module": "./dist/index.mjs",
   "types": "./dist/index.d.mts",
   "bin": {
-    "capnp-es": "./dist/compiler/capnpc-js.mjs",
     "capnpc-js": "./dist/compiler/capnpc-js.mjs",
     "capnpc-dts": "./dist/compiler/capnpc-dts.mjs",
     "capnpc-ts": "./dist/compiler/capnpc-ts.mjs"
@@ -40,13 +44,13 @@
     "bench:bun": "bun run ./test/bench/bench.ts",
     "bench:node": "node --import jiti/register ./test/bench/bench.ts",
     "build": "pnpm build:std && unbuild",
-    "build:std": "unbuild --stub && pnpm capnp-es src/capnp/_capnp/*.capnp --src-prefix=src/capnp/_capnp -ots:./src/capnp && prettier -w ./src/capnp",
-    "capnp-es": "jiti ./src/compiler/capnpc-js.ts",
+    "build:std": "unbuild --stub && pnpm capnpc src/codec/capnp/_capnp/*.capnp --src-prefix=src/codec/capnp/_capnp -ots:./src/codec/capnp && prettier -w ./src/codec/capnp",
+    "capnpc": "jiti ./src/compiler/capnpc-js.ts",
     "dev": "vitest dev",
     "lint": "eslint . && prettier -c .",
     "lint:fix": "automd && eslint . --fix && prettier -w .",
     "prepack": "pnpm build",
-    "play": "pnpm capnp-es -ots,js,dts playground/*.capnp",
+    "play": "pnpm capnpc -ots,js,dts playground/*.capnp",
     "profile:bun": "bun run ./test/bench/profile.ts",
     "profile:node": "node --cpu-prof --import jiti/register ./test/bench/profile.ts",
     "release": "pnpm test && changelogen --release && npm publish && git push --follow-tags",
@@ -84,13 +88,17 @@
     }
   },
   "packageManager": "pnpm@10.33.4",
+  "publishConfig": {
+    "access": "public"
+  },
   "keywords": [
     "zap",
+    "zap-proto",
     "capnp",
     "capnproto",
     "serialization",
-    "binary",
+    "zero-copy",
     "rpc",
-    "hanzo"
+    "codec"
   ]
 }

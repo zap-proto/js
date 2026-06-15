@@ -1,8 +1,8 @@
 // Based on https://github.com/jdiaz5513/capnp-ts (MIT - Julián Díaz)
 
-import { DEFAULT_BUFFER_SIZE } from "../../constants";
-import { SEG_ID_OUT_OF_BOUNDS, SEG_NOT_WORD_ALIGNED } from "../../errors";
-import { padToWord, format } from "../../util";
+import { DEFAULT_BUFFER_SIZE } from "../../../constants";
+import { SEG_ID_OUT_OF_BOUNDS, SEG_NOT_WORD_ALIGNED } from "../../../errors";
+import { padToWord, format } from "../../../util";
 import { ArenaAllocationResult } from "./arena-allocation-result";
 import { ArenaKind } from "./arena-kind";
 

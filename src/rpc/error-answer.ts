@@ -1,7 +1,7 @@
 // Based on https://github.com/jdiaz5513/capnp-ts (MIT - Julián Díaz)
 
 import { FixedAnswer } from "./fixed-answer";
-import { Struct } from "../serialization/pointers/struct";
+import { Struct } from "../codec/serialization/pointers/struct";
 import { PipelineOp } from "./pipeline-op";
 import { Call } from "./call";
 import { Answer } from "./answer";

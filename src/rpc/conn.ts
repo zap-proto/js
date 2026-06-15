@@ -5,7 +5,12 @@ import { RefCount } from "./refcount";
 import { Client, isSameClient, clientFromResolution } from "./client";
 import { Transport } from "./transport";
 import { Question, QuestionState } from "./question";
-import { Return, Payload, CapDescriptor, MessageTarget } from "../capnp/rpc";
+import {
+  Return,
+  Payload,
+  CapDescriptor,
+  MessageTarget,
+} from "../codec/capnp/rpc";
 import { RPCError } from "./rpc-error";
 import { AnswerEntry, Answer } from "./answer";
 import {
@@ -16,7 +21,7 @@ import {
   setReturnException,
 } from "./capability";
 import { Pipeline } from "./pipeline";
-import { Struct } from "../serialization/pointers/struct";
+import { Struct } from "../codec/serialization/pointers/struct";
 import {
   promisedAnswerOpsToTransform,
   transformToPromisedAnswer,
@@ -25,14 +30,14 @@ import { Method } from "./method";
 import { PipelineOp } from "./pipeline-op";
 import { ImportClient } from "./import-client";
 import { Call, placeParams } from "./call";
-import { Segment } from "../serialization/segment";
-import { List } from "../serialization/pointers/list/list";
+import { Segment } from "../codec/serialization/segment";
+import { List } from "../codec/serialization/pointers/list/list";
 import { Ref } from "./ref";
 import { PipelineClient } from "./pipeline-client";
 import { FixedAnswer } from "./fixed-answer";
 import { LocalAnswerClient } from "./local-answer-client";
 import { Finalize } from "./finalize";
-import { Message as RPCMessage } from "../capnp/rpc";
+import { Message as RPCMessage } from "../codec/capnp/rpc";
 import { MethodError } from "./method-error";
 import { Registry } from "./registry";
 import { joinAnswer } from "./join";
@@ -48,14 +53,14 @@ import {
   RPC_UNKNOWN_EXPORT_ID,
 } from "../errors";
 import { format } from "../util";
-import { Interface, Message } from "../serialization";
-import { AnyStruct } from "../serialization/pointers/struct";
+import { Interface, Message } from "../codec/serialization";
+import { AnyStruct } from "../codec/serialization/pointers/struct";
 import {
   InterfaceCtor,
   ServerTarget,
-} from "../serialization/pointers/interface";
+} from "../codec/serialization/pointers/interface";
 import { Server } from "./server";
-import { getAs } from "../serialization/pointers/struct.utils";
+import { getAs } from "../codec/serialization/pointers/struct.utils";
 
 type QuestionSlot = Question<any, any> | null;
 

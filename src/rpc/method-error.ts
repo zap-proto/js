@@ -1,7 +1,7 @@
 // Based on https://github.com/jdiaz5513/capnp-ts (MIT - Julián Díaz)
 
 import { Method } from "./method";
-import { Struct } from "../serialization/pointers/struct";
+import { Struct } from "../codec/serialization/pointers/struct";
 import { format } from "../util";
 import { RPC_METHOD_ERROR } from "../errors";
 

@@ -1,6 +1,6 @@
 // Based on https://github.com/jdiaz5513/capnp-ts (MIT - Julián Díaz)
 
-import { Struct } from "../../serialization/pointers/struct";
+import { Struct } from "../../codec/serialization/pointers/struct";
 import { Answer } from "../../rpc/answer";
 import { Deferred } from "../deferred";
 import { ImmediateAnswer } from "../immediate-answer";
@@ -13,10 +13,10 @@ import {
   RPC_NULL_CLIENT,
   INVARIANT_UNREACHABLE_CODE,
 } from "../../errors";
-import { Pointer } from "../../serialization/pointers/pointer";
+import { Pointer } from "../../codec/serialization/pointers/pointer";
 import { transformPtr } from "../transform-ptr";
 import { ErrorAnswer } from "../error-answer";
-import { Interface } from "../../serialization/pointers/interface";
+import { Interface } from "../../codec/serialization/pointers/interface";
 
 const callQueueSize = 64;
 

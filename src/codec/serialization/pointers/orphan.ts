@@ -2,8 +2,8 @@ import {
   PTR_ADOPT_WRONG_MESSAGE,
   PTR_ALREADY_ADOPTED,
   PTR_INVALID_POINTER_TYPE,
-} from "../../errors";
-import { format } from "../../util";
+} from "../../../errors";
+import { format } from "../../../util";
 import { ListElementSize } from "../list-element-size";
 import { ObjectSize, getWordLength } from "../object-size";
 import { Segment } from "../segment";

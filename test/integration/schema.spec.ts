@@ -1,8 +1,8 @@
 // Based on https://github.com/jdiaz5513/capnp-ts (MIT - Julián Díaz)
 
 import { test, assert as t } from "vitest";
-import * as capnp from "capnp-es";
-import { CodeGeneratorRequest } from "src/capnp/schema";
+import * as capnp from "@zap-proto/zap";
+import { CodeGeneratorRequest } from "src/codec/capnp/schema";
 import { readFileBuffer } from "test/utils";
 
 const SCHEMA_MESSAGE = readFileBuffer("test/fixtures/data/schema.bin");

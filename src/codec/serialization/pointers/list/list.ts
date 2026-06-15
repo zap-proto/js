@@ -5,8 +5,8 @@ import {
   PTR_INVALID_LIST_SIZE,
   LIST_NO_MUTABLE,
   LIST_NO_SEARCH,
-} from "../../../errors";
-import { format } from "../../../util";
+} from "../../../../errors";
+import { format } from "../../../../util";
 import { ListElementSize } from "../../list-element-size";
 import { ObjectSize, padToWord, getByteLength } from "../../object-size";
 import { Segment } from "../../segment";

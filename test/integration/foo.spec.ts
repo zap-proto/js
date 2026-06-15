@@ -2,7 +2,7 @@
 
 import { test } from "vitest";
 
-import * as capnp from "capnp-es";
+import * as capnp from "@zap-proto/zap";
 
 import { Foo as OldFoo } from "../fixtures/foo.ts";
 import { Foo as NewFoo } from "../fixtures/foo-new.ts";

@@ -1,7 +1,7 @@
 // Based on https://github.com/jdiaz5513/capnp-ts (MIT - Julián Díaz)
 
-import { NATIVE_LITTLE_ENDIAN } from "../../constants";
-import { format, padToWord } from "../../util";
+import { NATIVE_LITTLE_ENDIAN } from "../../../constants";
+import { format, padToWord } from "../../../util";
 import { ListElementSize } from "../list-element-size";
 import {
   ObjectSize,
@@ -11,8 +11,8 @@ import {
 } from "../object-size";
 import { Data } from "./data";
 import { List, type ListCtor, initList as _initList } from "./list/list";
-import { type Client } from "../../rpc/client";
-import { clientOrNull } from "../../rpc/error-client";
+import { type Client } from "../../../rpc/client";
+import { clientOrNull } from "../../../rpc/error-client";
 import { _Pointer, _PointerCtor, Pointer, PointerCtor } from "./pointer";
 import {
   getContent,
@@ -39,7 +39,7 @@ import {
   PTR_INVALID_UNION_ACCESS,
   PTR_STRUCT_DATA_OUT_OF_BOUNDS,
   PTR_STRUCT_POINTER_OUT_OF_BOUNDS,
-} from "../../errors";
+} from "../../../errors";
 
 import type { Struct, StructCtor } from "./struct";
 

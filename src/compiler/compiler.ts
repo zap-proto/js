@@ -1,8 +1,8 @@
 // Based on https://github.com/jdiaz5513/capnp-ts (MIT - Julián Díaz)
 
 import ts from "typescript";
-import * as s from "../capnp/schema.ts";
-import { Message } from "../serialization/message.ts";
+import * as s from "../codec/capnp/schema.ts";
+import { Message } from "../codec/serialization/message.ts";
 import * as E from "./errors";
 import {
   CodeGeneratorContext,

@@ -2,7 +2,7 @@
 
 import { AnswerEntry, Answer } from "./answer";
 import { PipelineOp } from "./pipeline-op";
-import { Struct } from "../serialization/pointers/struct";
+import { Struct } from "../codec/serialization/pointers/struct";
 import { Call } from "./call";
 import { Fulfiller } from "./fulfiller/fulfiller";
 import { Client, clientFromResolution } from "./client";

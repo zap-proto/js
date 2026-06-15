@@ -1,6 +1,6 @@
 // Based on https://github.com/jdiaz5513/capnp-ts (MIT - Julián Díaz)
 
-import { INVARIANT_UNREACHABLE_CODE } from "../errors";
+import { INVARIANT_UNREACHABLE_CODE } from "../../errors";
 
 type DataViewSetter<T> = (
   byteOffset: number,

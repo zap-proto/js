@@ -1,7 +1,7 @@
 // Based on https://github.com/jdiaz5513/capnp-ts (MIT - Julián Díaz)
 
-import { Pointer } from "../serialization/pointers/pointer";
-import { utils } from "../serialization/pointers";
+import { Pointer } from "../codec/serialization/pointers/pointer";
+import { utils } from "../codec/serialization/pointers";
 import { pointerToStruct } from "./pointer-to-struct";
 import { PipelineOp } from "./pipeline-op";
 
