@@ -1,6 +1,6 @@
 {
   "name": "@zap-proto/zap",
-  "version": "2.0.0",
+  "version": "1.1.0",
   "description": "The ZAP foundation layer for TypeScript — Cap'n-Proto wire codec + Level-4 RPC primitives. The wire underneath @zap-proto/mcp and the rest of the ZAP protocol family.",
   "repository": "zap-proto/ts",
   "homepage": "https://zap-proto.dev/docs/sdks/typescript",
