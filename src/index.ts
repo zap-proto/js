@@ -9,12 +9,19 @@
  * so generated TS views/builders (zapgen --target=ts) interoperate with Go
  * service binaries over the wire.
  *
+ * This root entry is UNIVERSAL — it imports no Node built-ins and is safe in
+ * any browser bundle. The Node-only TCP transport (ZapClient, pipeline) lives
+ * behind the `@zap-proto/zap/node` sub-path so it never leaks `node:net` into
+ * the browser.
+ *
  * Layers:
  *   - wire.ts:     little-endian primitives + header constants.
  *   - view.ts:     Message / StructView / ListView (read).
  *   - builder.ts:  Builder / StructBuilder / ListBuilder (write).
  *   - envelope.ts: the msgType+method+capability call envelope.
- *   - client.ts:   TCP RPC client (luxfi/zap framing; Node-only).
+ *
+ * Node-only (import from `@zap-proto/zap/node`):
+ *   - client.ts:   TCP RPC client (luxfi/zap framing; uses node:net).
  *   - pipeline.ts: two-connection promise pipelining.
  */
 
@@ -50,12 +57,3 @@ export {
   type Response,
   type MethodValue,
 } from "./envelope.js";
-
-export { ZapClient, type ConnectOptions } from "./client.js";
-
-export {
-  pipeline,
-  assertOK,
-  type PipelineLeg,
-  type PipelineResult,
-} from "./pipeline.js";
