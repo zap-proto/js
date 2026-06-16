@@ -55,10 +55,21 @@ import { ZapClient, pipeline } from "@zap-proto/zap/node";
 TypeScript bindings from a `.zap` schema after install:
 
 ```sh
-npx zapgen schema.zap                 # writes schema_zap.ts next to the input
-npx zapgen -out ./src/gen schema.zap  # writes into the given directory
+npx zapgen schema.zap                      # writes schema_zap.ts next to the input
+npx zapgen -out ./src/gen schema.zap       # writes into the given directory
+npx zapgen --emit=openapi schema.zap       # writes schema.openapi.json (OpenAPI 3.1)
+npx zapgen --emit=ts,openapi schema.zap    # writes both targets
 npx zapgen --help
 ```
+
+The `--emit` targets are `ts` (default) and `openapi`. `openapi` emits one
+OpenAPI 3.1 document per `interface`: each method becomes a
+`POST /<service-name-kebab>/<method-name-kebab>` operation whose request/response
+bodies are the JSON Schema of the method's structs, and every referenced struct
+lands in `components.schemas`. The emitted paths match what
+`@zap-proto/web/server`'s `httpServe` mounts, so the OpenAPI surface and the live
+HTTP service stay in lockstep. `# @openapi:version X` and `# @openapi:server URL`
+comment directives set `info.version` and `servers[]`.
 
 ### Schema syntax
 
