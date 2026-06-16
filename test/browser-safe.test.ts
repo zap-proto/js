@@ -19,6 +19,14 @@ import { readFileSync, existsSync } from "node:fs";
 import { join } from "node:path";
 import { describe, it, expect } from "vitest";
 
+/** Strip `//` line comments and block comments so JSDoc prose mentioning
+ *  `node:` / `createRequire` does not trip the code-only guard below. */
+function stripComments(src: string): string {
+  return src
+    .replace(/\/\*[\s\S]*?\*\//g, "")
+    .replace(/(^|[^:"'`])\/\/.*$/gm, "$1");
+}
+
 describe("@zap-proto/zap root is browser-safe (FIX 1)", () => {
   it("imports under a DOM environment with no resolution error", async () => {
     // happy-dom installs a DOM global; this confirms the env is active.
@@ -42,13 +50,13 @@ describe("@zap-proto/zap root is browser-safe (FIX 1)", () => {
       // dist is produced by `pnpm build`; skip if running pre-build.
       return;
     }
-    const src = readFileSync(dist, "utf8");
+    const code = stripComments(readFileSync(dist, "utf8"));
     // No `from "node:..."`, no bare `from "net"/"tls"/"module"`, no require().
-    expect(/from\s*["']node:/.test(src)).toBe(false);
-    expect(/from\s*["'](?:net|tls|module|http|stream)["']/.test(src)).toBe(
+    expect(/from\s*["']node:/.test(code)).toBe(false);
+    expect(/from\s*["'](?:net|tls|module|http|stream)["']/.test(code)).toBe(
       false,
     );
-    expect(/createRequire/.test(src)).toBe(false);
+    expect(/\bcreateRequire\b/.test(code)).toBe(false);
   });
 
   it("the Node sub-path still carries the TCP client", async () => {
