@@ -146,10 +146,13 @@ export function emitTS(f: File): [string, string] {
     if (fileHasList(f)) w.push("  type ListView,\n");
   }
   if (needsService) {
+    // Only the helpers the emitted Client/Server reference, so the generated
+    // file type-checks under strict noUnusedLocals. (parseResponse is not used:
+    // the Client awaits a decoded Response from its channel, it never decodes
+    // an envelope itself.)
     w.push("  buildRequest,\n");
     w.push("  parseRequest,\n");
     w.push("  buildResponse,\n");
-    w.push("  parseResponse,\n");
     w.push("  NO_TARGET,\n");
     w.push("  Status,\n");
     w.push("  type Call,\n");
