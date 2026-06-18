@@ -4,8 +4,8 @@
 /**
  * envelope.ts — the msgType + method + capability call envelope.
  *
- * BYTE-COMPATIBLE with github.com/hanzoai/ui-customization/server/wire.go. That
- * file is the on-the-wire contract; the offsets and fixed sizes below mirror it
+ * BYTE-COMPATIBLE with the canonical ZAP wire format (github.com/zap-proto/go).
+ * That is the on-the-wire contract; the offsets and fixed sizes below mirror it
  * exactly. A request built here is decoded by the Go server's parseRequest, and
  * a response built by the Go server's buildResponse is decoded by parseResponse
  * here.
