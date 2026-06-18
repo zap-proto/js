@@ -1,14 +1,14 @@
 # @zap-proto/zap — native ZAP TypeScript wire runtime
 
-Zero dependencies. Zero Cap'n Proto. The TS peer of `github.com/zap-proto/go`,
+Zero dependencies. Its own wire format. The TS peer of `github.com/zap-proto/go`,
 byte-compatible with it and with the `github.com/luxfi/zap` transport.
 
 ## What it is
 
 The TypeScript half of the native ZAP stack. Generated TS (`zapgen --target=ts`)
 emits View/Builder classes over this runtime; a buffer built here parses through
-the Go runtime unchanged, and vice versa. Replaces the capnp-flavored `zap-es`
-on the TS side — no `capnp-es`, no `*.capnp`, no `interface @0xID` dialect.
+the Go runtime unchanged, and vice versa. Replaces the older schema-compiler `zap-es`
+on the TS side — no legacy IDL, no `interface @0xID` dialect, just the wire runtime.
 
 ## Layers (src/)
 

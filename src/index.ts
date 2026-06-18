@@ -4,7 +4,7 @@
 /**
  * @zap-proto/zap — the native ZAP TypeScript wire runtime.
  *
- * Zero runtime dependencies, zero Cap'n Proto. Byte-compatible with the
+ * Zero runtime dependencies, its own wire format. Byte-compatible with the
  * canonical Go runtime (github.com/zap-proto/go) and the luxfi/zap transport,
  * so generated TS views/builders (zapgen --target=ts) interoperate with Go
  * service binaries over the wire.

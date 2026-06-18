@@ -4,7 +4,7 @@
 /**
  * pipeline.ts — promise pipelining over two ZAP connections.
  *
- * Mirrors github.com/hanzoai/ui-customization/server/client.go Pipeline(): a
+ * Mirrors the canonical Go ZAP client's Pipeline() (github.com/zap-proto/go): a
  * dependent call references the not-yet-resolved answer of an earlier call by
  * Target = the earlier call's PromiseID. The server resolves the first call's
  * answer (the authenticated org) and only then dispatches the dependent call
