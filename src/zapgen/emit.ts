@@ -10,7 +10,7 @@
  * size, same variable-tail encoding), so a buffer built by the generated Go
  * builder is readable by the generated TS view and vice versa. The generated
  * code imports the runtime from "@zap-proto/zap" (the published npm package),
- * not "@hanzo/zap".
+ * never a brand-scoped alias.
  *
  * ADDED here: `interface` emission. Each declared interface codegens a typed
  * Client class (one async method per declared method), a typed abstract Server
