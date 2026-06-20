@@ -370,7 +370,60 @@ class Parser {
   }
 }
 
-/** parse parses a .zap source file into a File AST. */
+/**
+ * desugar rewrites whitespace-significant (offside) `struct`/`interface` bodies
+ * into the brace form the parser accepts, so a ZAP schema may be written either
+ * way. A braceless `struct X` / `interface X` header opens an indentation
+ * block whose body is the following lines indented deeper than the header;
+ * `{`/`}` are synthesized at the block's edges. Field bodies (`name type @off`)
+ * pass through unchanged — `@off` is an explicit byte offset in this dialect's
+ * zero-copy layout, so it is never synthesized. Brace-style source is left
+ * byte-for-byte unchanged (back-compat): a header already ending in `{` is not
+ * treated as an offside block. Blank lines and whole-line `#` comments are
+ * transparent (they neither open nor close blocks).
+ */
+function desugar(src: string): string {
+  const lines = src.split("\n");
+  const out: string[] = [];
+  const stack: number[] = []; // indents of open braceless block headers
+  const indentOf = (s: string): number => {
+    let i = 0;
+    while (i < s.length && (s[i] === " " || s[i] === "\t")) i++;
+    return i;
+  };
+  for (const raw of lines) {
+    const t = raw.trim();
+    if (t === "" || t.startsWith("#")) {
+      out.push(raw);
+      continue;
+    }
+    const indent = indentOf(raw);
+    while (stack.length > 0 && indent <= stack[stack.length - 1]) {
+      out.push(" ".repeat(stack[stack.length - 1]) + "}");
+      stack.pop();
+    }
+    const hash = raw.indexOf("#");
+    const code = (hash >= 0 ? raw.slice(0, hash) : raw).trim();
+    if (/^(struct|interface)\b/.test(code) && !code.includes("{")) {
+      // Braceless block header: open a brace block (before any trailing comment).
+      if (hash >= 0) {
+        out.push(raw.slice(0, hash).replace(/\s+$/, "") + " { " + raw.slice(hash));
+      } else {
+        out.push(raw + " {");
+      }
+      stack.push(indent);
+    } else {
+      out.push(raw);
+    }
+  }
+  while (stack.length > 0) {
+    out.push(" ".repeat(stack[stack.length - 1]) + "}");
+    stack.pop();
+  }
+  return out.join("\n");
+}
+
+/** parse parses a .zap source file (brace or whitespace syntax) into a File AST. */
 export function parse(filename: string, src: string): File {
-  return new Parser(filename, src).parseFile();
+  return new Parser(filename, desugar(src)).parseFile();
 }
