@@ -1,6 +1,6 @@
 {
   "name": "@zap-proto/zap",
-  "version": "1.3.3",
+  "version": "1.4.0",
   "description": "Native ZAP (Zero-copy Application Protocol) TypeScript wire runtime. Zero dependencies, its own wire format; byte-compatible with github.com/zap-proto/go and the luxfi/zap transport. Lives at github.com/zap-proto/js; published as @zap-proto/zap.",
   "license": "MIT",
   "repository": "zap-proto/js",
