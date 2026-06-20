@@ -125,6 +125,9 @@ class Parser {
     if (this.pos === start) throw this.errf("expected integer");
     const n = Number.parseInt(this.src.slice(start, this.pos), 10);
     if (!Number.isFinite(n)) throw this.errf("bad integer");
+    // Reject offsets that overflow exact integer precision — parseInt silently
+    // returns a lossy float (e.g. 1e20), which would corrupt the layout. [audit: H2]
+    if (!Number.isSafeInteger(n)) throw this.errf("integer out of range");
     return n;
   }
 
@@ -404,7 +407,12 @@ function desugar(src: string): string {
     }
     const hash = raw.indexOf("#");
     const code = (hash >= 0 ? raw.slice(0, hash) : raw).trim();
-    if (/^(struct|interface)\b/.test(code) && !code.includes("{")) {
+    // A braceless block header is EXACTLY `struct Name` / `interface Name` —
+    // keyword + one identifier + end-of-line. This deliberately does NOT match a
+    // field whose name is `struct`/`interface` (e.g. `struct u8 @0`, which has a
+    // type/`@off` after the keyword), nor a brace header (`struct S {`, which has
+    // `{` after the name), nor `structFoo` (no space). [audit: H4]
+    if (/^(struct|interface)[ \t]+[A-Za-z_]\w*[ \t]*$/.test(code)) {
       // Braceless block header: open a brace block (before any trailing comment).
       if (hash >= 0) {
         out.push(raw.slice(0, hash).replace(/\s+$/, "") + " { " + raw.slice(hash));
