@@ -230,7 +230,10 @@ export abstract class StructView {
     const relOffset = readI32(this.dv, pos);
     if (relOffset === 0) return new RootView(this.data, 0);
     const absOffset = pos + relOffset;
-    if (absOffset < 0 || absOffset >= this.data.byteLength)
+    // Floor at HEADER_SIZE: a backward pointer must not resolve into the 16-byte
+    // wire header (would alias magic/version/rootOffset as struct fields). Matches
+    // Go Object(): `absOffset < HeaderSize || absOffset >= len(data)`.
+    if (absOffset < HEADER_SIZE || absOffset >= this.data.byteLength)
       return new RootView(this.data, 0);
     return new RootView(this.data, absOffset);
   }
@@ -245,8 +248,13 @@ export abstract class StructView {
     const relOffset = readI32(this.dv, pos);
     if (relOffset === 0) return new ListView(this.data, 0, 0);
     const length = readU32(this.dv, pos + 4);
+    // Clamp length to the message size before trusting it: a 0xFFFFFFFF wire word
+    // would otherwise make len() report 4G elements and a `for i<len()` consumer
+    // spin into a DoS. Permissive `length > byteLength` baseline (per-element
+    // accessors re-check their own stride). Matches Go List().
+    if (length > this.data.byteLength) return new ListView(this.data, 0, 0);
     const absOffset = pos + relOffset;
-    if (absOffset < 0 || absOffset >= this.data.byteLength)
+    if (absOffset < HEADER_SIZE || absOffset >= this.data.byteLength)
       return new ListView(this.data, 0, 0);
     return new ListView(this.data, absOffset, length);
   }

@@ -23,6 +23,9 @@ import {
   Status,
   encodeUtf8,
   decodeUtf8,
+  StructView,
+  ListView,
+  HEADER_SIZE,
 } from "@zap-proto/zap";
 
 // Hex of a deterministic Capability produced by the Go runtime
@@ -210,5 +213,69 @@ describe("@zap-proto/zap wire format", () => {
     expect(resp.status).toBe(Status.OK);
     expect(resp.promiseID).toBe(9);
     expect(decodeUtf8(resp.body)).toBe('{"ok":true}');
+  });
+});
+
+// Concrete probe exposing the protected pointer resolvers so adversarial
+// buffers exercise the exact code path the generated object/list getters use.
+class Probe extends StructView {
+  obj(fieldOffset: number): StructView {
+    return this.object(fieldOffset);
+  }
+  lst(fieldOffset: number): ListView {
+    return this.list(fieldOffset);
+  }
+}
+
+// These pin the cross-wire invariant: the TS reader must accept/reject every
+// input the Go reader does. Each scenario is a confirmed PoC from the red-team
+// audit — before the HEADER_SIZE floor + length clamp landed, object()/list()
+// followed a crafted backward pointer INTO the 16-byte header, and list()
+// reported a 0xFFFFFFFF wire word verbatim (a 4G-iteration DoS).
+describe("@zap-proto/zap reader hardening (Go reject-parity)", () => {
+  // [16B header][struct root @ HEADER_SIZE] in a 32-byte buffer.
+  function craft(): { data: Uint8Array; dv: DataView; root: number } {
+    const data = new Uint8Array(HEADER_SIZE + 16);
+    data.set([0x5a, 0x41, 0x50, 0x00]); // 'ZAP\0' — plausible header to alias
+    return {
+      data,
+      dv: new DataView(data.buffer, data.byteOffset, data.byteLength),
+      root: HEADER_SIZE,
+    };
+  }
+
+  it("object(): rejects a backward pointer into the wire header", () => {
+    const { data, dv, root } = craft();
+    dv.setInt32(root, 8 - root, true); // absOffset = 8, inside the header
+    expect(new Probe(data, root).obj(0).isNull()).toBe(true);
+  });
+
+  it("object(): still resolves a valid forward pointer", () => {
+    const { data, dv, root } = craft();
+    dv.setInt32(root, 24 - root, true); // absOffset = 24 (>= HEADER_SIZE)
+    const v = new Probe(data, root).obj(0);
+    expect(v.isNull()).toBe(false);
+    expect(v.offset).toBe(24);
+  });
+
+  it("list(): rejects a backward pointer into the header", () => {
+    const { data, dv, root } = craft();
+    dv.setInt32(root, 8 - root, true); // absOffset = 8
+    dv.setUint32(root + 4, 1, true); // length 1
+    expect(new Probe(data, root).lst(0).len()).toBe(0);
+  });
+
+  it("list(): clamps an out-of-range length (0xFFFFFFFF DoS word)", () => {
+    const { data, dv, root } = craft();
+    dv.setInt32(root, 24 - root, true); // valid forward pointer
+    dv.setUint32(root + 4, 0xffffffff, true); // length > byteLength
+    expect(new Probe(data, root).lst(0).len()).toBe(0);
+  });
+
+  it("list(): still resolves a valid forward list", () => {
+    const { data, dv, root } = craft();
+    dv.setInt32(root, 24 - root, true);
+    dv.setUint32(root + 4, 1, true);
+    expect(new Probe(data, root).lst(0).len()).toBe(1);
   });
 });
