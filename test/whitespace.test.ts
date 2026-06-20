@@ -207,6 +207,42 @@ struct C { c u32 @0 }
   });
 });
 
+describe("whitespace-significant syntax — red-team regressions", () => {
+  it("[H4] a field named `struct`/`interface` is a field, not a block header", () => {
+    eq(`package p\nstruct S\n  struct u8 @0\n  interface text @8\n`,
+       `package p\nstruct S {\n  struct u8 @0\n  interface text @8\n}\n`);
+    const f = parse("x.zap", `package p\nstruct S\n  struct u32 @0\n`);
+    expect(f.structs[0].fields[0]).toMatchObject({ name: "struct", offset: 0 });
+  });
+
+  it("[H4] a field named `struct` with a trailing comment is still a field", () => {
+    eq(`package p\nstruct S\n  struct u8 @0  # the struct field\n`,
+       `package p\nstruct S {\n  struct u8 @0  # the struct field\n}\n`);
+  });
+
+  it("[H4] `structFoo`/`interfaceX` (no space) is not a header — parser rejects at top level", () => {
+    expect(() => parse("x.zap", `package p\nstructFoo\n`)).toThrow();
+  });
+
+  it("[H4] brace header still passes through (single-line + multiline)", () => {
+    expect(() => parse("x.zap", `package p\nstruct S { a u8 @0 }\n`)).not.toThrow();
+    expect(() => parse("x.zap", `package p\nstruct S {\n  a u8 @0\n}\n`)).not.toThrow();
+  });
+
+  it("[H2] absurd byte offset is rejected, not silently truncated to a float", () => {
+    expect(() => parse("x.zap", `package p\nstruct S { a u8 @99999999999999999999 }\n`))
+      .toThrowError(/out of range/);
+    expect(() => parse("x.zap", `package p\nstruct S\n  a u8 @18446744073709551616\n`))
+      .toThrowError(/out of range/);
+  });
+
+  it("field comments are preserved through the desugar (fidelity)", () => {
+    // TS keeps the comment; this guards against a future 'drop comment' regression.
+    const f = parse("x.zap", `package p\nstruct S\n  a u32 @0  # documented\n`);
+    expect(f.structs[0].fields[0]).toMatchObject({ name: "a", offset: 0 });
+  });
+});
+
 /* ----------------------------- property fuzz ----------------------------- */
 
 function mulberry32(seed: number): () => number {
