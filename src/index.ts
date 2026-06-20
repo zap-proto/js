@@ -1,43 +1,59 @@
+// Copyright (C) 2025, Lux Industries Inc. All rights reserved.
+// See the file LICENSE for licensing terms.
+
 /**
- * ZAP - Zero-Copy App Proto
+ * @zap-proto/zap — the native ZAP TypeScript wire runtime.
  *
- * High-performance Cap'n Proto RPC for AI agent communication.
+ * Zero runtime dependencies, its own wire format. Byte-compatible with the
+ * canonical Go runtime (github.com/zap-proto/go) and the luxfi/zap transport,
+ * so generated TS views/builders (zapgen --target=ts) interoperate with Go
+ * service binaries over the wire.
  *
- * @example
- * ```typescript
- * import { Client } from '@hanzo/zap';
+ * This root entry is UNIVERSAL — it imports no Node built-ins and is safe in
+ * any browser bundle. The Node-only TCP transport (ZapClient, pipeline) lives
+ * behind the `@zap-proto/zap/node` sub-path so it never leaks `node:net` into
+ * the browser.
  *
- * const client = await Client.connect('zap://localhost:9999');
- * const tools = await client.listTools();
- * const result = await client.callTool('search', { query: 'hello' });
- * ```
+ * Layers:
+ *   - wire.ts:     little-endian primitives + header constants.
+ *   - view.ts:     Message / StructView / ListView (read).
+ *   - builder.ts:  Builder / StructBuilder / ListBuilder (write).
+ *   - envelope.ts: the msgType+method+capability call envelope.
  *
- * @packageDocumentation
+ * Node-only (import from `@zap-proto/zap/node`):
+ *   - client.ts:   TCP RPC client (luxfi/zap framing; uses node:net).
+ *   - pipeline.ts: two-connection promise pipelining.
  */
 
-export { Client } from './client.js';
-export { Server } from './server.js';
-export { Gateway } from './gateway.js';
-export type { Config, ServerConfig } from './config.js';
-export { DEFAULT_CONFIG, loadConfigFromEnv, mergeConfig } from './config.js';
 export {
-  ZapError,
-  ConnectionError,
-  TransportError,
-  ProtocolError,
-  TimeoutError,
-  ServerError,
-  ToolNotFoundError,
-  ResourceNotFoundError,
-  InvalidArgumentError,
-} from './error.js';
-export * from './types.js';
-export * from './identity.js';
-export * from './agent_consensus.js';
-export * from './lux_consensus.js';
+  HEADER_SIZE,
+  ALIGNMENT,
+  VERSION,
+  VERSION_1,
+  VERSION_2,
+  MAGIC,
+  FLAG_NONE,
+  FLAG_COMPRESSED,
+  FLAG_ENCRYPTED,
+  FLAG_SIGNED,
+  encodeUtf8,
+  decodeUtf8,
+} from "./wire.js";
 
-/** ZAP protocol version */
-export const VERSION = '0.2.1';
+export { Message, StructView, ListView, ZapParseError } from "./view.js";
 
-/** Default port for ZAP connections */
-export const DEFAULT_PORT = 9999;
+export { Builder, StructBuilder, ListBuilder } from "./builder.js";
+
+export {
+  MSG_TYPE_ROUTER_BASE,
+  Method,
+  NO_TARGET,
+  Status,
+  buildRequest,
+  parseRequest,
+  buildResponse,
+  parseResponse,
+  type Call,
+  type Response,
+  type MethodValue,
+} from "./envelope.js";

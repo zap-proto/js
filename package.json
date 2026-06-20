@@ -1,63 +1,49 @@
 {
-  "name": "@zap-protocol/zap",
-  "version": "0.2.1",
-  "description": "ZAP - Zero-Copy App Proto for JavaScript/TypeScript",
+  "name": "@zap-proto/zap",
+  "version": "1.4.1",
+  "description": "Native ZAP (Zero-copy Application Protocol) TypeScript wire runtime. Zero dependencies, its own wire format; byte-compatible with github.com/zap-proto/go and the luxfi/zap transport. Lives at github.com/zap-proto/js; published as @zap-proto/zap.",
+  "license": "MIT",
+  "repository": "zap-proto/js",
   "type": "module",
+  "sideEffects": false,
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js",
+      "default": "./dist/index.js"
+    },
+    "./node": {
+      "types": "./dist/node.d.ts",
+      "import": "./dist/node.js",
+      "default": "./dist/node.js"
+    }
+  },
   "main": "./dist/index.js",
   "module": "./dist/index.js",
   "types": "./dist/index.d.ts",
-  "exports": {
-    ".": {
-      "import": "./dist/index.js",
-      "types": "./dist/index.d.ts"
-    }
+  "bin": {
+    "zapgen": "./dist/bin/zapgen.mjs"
   },
   "files": [
     "dist",
     "src"
   ],
   "scripts": {
-    "build": "tsc",
-    "dev": "tsc --watch",
-    "test": "vitest run",
-    "test:watch": "vitest",
-    "test:coverage": "vitest run --coverage",
-    "lint": "eslint src",
-    "format": "prettier --write src"
-  },
-  "keywords": [
-    "capnproto",
-    "rpc",
-    "agents",
-    "mcp",
-    "ai",
-    "zap"
-  ],
-  "author": "ZAP Protocol <dev@zap.dev>",
-  "license": "MIT",
-  "repository": {
-    "type": "git",
-    "url": "https://github.com/zap-protocol/zap-js"
-  },
-  "homepage": "https://zap.dev",
-  "bugs": {
-    "url": "https://github.com/zap-protocol/zap-js/issues"
-  },
-  "dependencies": {
-    "capnp-ts": "^0.7.0"
+    "build": "tsup --config tsup.config.ts",
+    "prepare": "tsup --config tsup.config.ts",
+    "typecheck": "tsc --noEmit",
+    "test": "vitest run"
   },
   "devDependencies": {
     "@types/node": "^22.0.0",
-    "@vitest/coverage-v8": "^2.0.0",
-    "typescript": "^5.7.0",
-    "vitest": "^2.0.0",
-    "eslint": "^9.0.0",
-    "prettier": "^3.0.0"
+    "happy-dom": "^20.10.4",
+    "tsup": "^8.5.1",
+    "typescript": "^5.9.3",
+    "vitest": "^4.1.4"
   },
-  "engines": {
-    "node": ">=18"
-  },
-  "publishConfig": {
-    "access": "public"
+  "pnpm": {
+    "onlyBuiltDependencies": [
+      "esbuild"
+    ]
   }
 }
