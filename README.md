@@ -11,7 +11,7 @@ ZAP defines its own wire format, byte-defined by
 `zap-proto/spec`. This package implements that format directly — no IDL files,
 no `interface @0xID` dialect, no codec dependency.
 
-Lives at `github.com/zap-proto/ts`; published as `@zap-proto/zap`.
+Lives at `github.com/zap-proto/js`; published as `@zap-proto/zap`.
 
 ## Install
 
@@ -72,6 +72,17 @@ HTTP service stay in lockstep. `# @openapi:version X` and `# @openapi:server URL
 comment directives set `info.version` and `servers[]`.
 
 ### Schema syntax
+
+The canonical surface of ZAP is **whitespace-significant** — brace-free,
+offside-rule blocks, ordinals implied by declaration order — and is documented at
+[zap-proto.dev/docs/schema](https://zap-proto.dev/docs/schema). That surface is
+parsed by the `zap` front-end ([`zap-proto/cpp-core`](https://github.com/zap-proto/cpp-core)),
+which every language plugin shells out to.
+
+`zapgen` in this repo is a self-contained TypeScript generator with its own
+parser, and it reads the explicit **brace** form below (`struct ... { field type
+@N }`, `method(...) returns (...)`). Both forms describe identical schemas; pick
+the one your generator consumes — `npx zapgen` here expects the brace form.
 
 ```zap
 package myservice
