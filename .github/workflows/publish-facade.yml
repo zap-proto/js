@@ -1,0 +1,30 @@
+name: publish zap-proto facade
+
+# Publishes the unscoped `zap-proto` facade (re-exports @zap-proto/zap) so the
+# install name is consistent across npm / PyPI / crates.io. Run on demand with a
+# version; the regular `release.yml` also keeps it in sync on each `v*` tag.
+on:
+  workflow_dispatch:
+    inputs:
+      version:
+        description: 'Version to publish (e.g. 1.6.0)'
+        required: true
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          registry-url: 'https://registry.npmjs.org'
+      - name: Publish zap-proto facade
+        working-directory: zap-proto
+        run: |
+          V="${{ github.event.inputs.version }}"
+          npm version --no-git-tag-version --allow-same-version "$V"
+          npm pkg set "dependencies.@zap-proto/zap=^$V"
+          npm publish --access public
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}

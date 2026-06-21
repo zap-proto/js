@@ -30,3 +30,13 @@ jobs:
           npm publish --access public
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+
+      - name: Publish zap-proto facade (re-exports @zap-proto/zap, version-synced)
+        working-directory: zap-proto
+        run: |
+          V="${GITHUB_REF_NAME#v}"
+          npm version --no-git-tag-version --allow-same-version "$V"
+          npm pkg set "dependencies.@zap-proto/zap=^$V"
+          npm publish --access public
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
