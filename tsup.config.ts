@@ -5,14 +5,15 @@ import { defineConfig } from "tsup";
 
 // Two output shapes from one source tree:
 //
-//   1. The library entries (index, node) — ESM `.js` with .d.ts, matching the
-//      package `exports` map. `index` is universal (browser-safe); `node` adds
-//      the Node-only TCP transport.
+//   1. The library entries (index, node, cap) — ESM `.js` with .d.ts, matching
+//      the package `exports` map. `index` is universal (browser-safe); `node`
+//      adds the Node-only TCP transport; `cap` is the capability runtime
+//      (reaches node:crypto for synchronous Ed25519 + SHA-256).
 //   2. The `zapgen` CLI — a single ESM `.mjs` bundle under dist/bin with its
 //      `#!/usr/bin/env node` shebang preserved, referenced by package `bin`.
 export default defineConfig([
   {
-    entry: ["src/index.ts", "src/node.ts"],
+    entry: ["src/index.ts", "src/node.ts", "src/cap.ts"],
     format: "esm",
     dts: true,
     clean: true,

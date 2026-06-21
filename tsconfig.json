@@ -18,7 +18,8 @@
     "noEmit": true,
     "verbatimModuleSyntax": true,
     "paths": {
-      "@zap-proto/zap": ["./src/index.ts"]
+      "@zap-proto/zap": ["./src/index.ts"],
+      "@zap-proto/zap/cap": ["./src/cap.ts"]
     }
   },
   "include": ["src", "test"]

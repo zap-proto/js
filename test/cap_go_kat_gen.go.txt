@@ -1,0 +1,97 @@
+package main
+
+import (
+	"crypto/ed25519"
+	"encoding/binary"
+	"encoding/hex"
+	"fmt"
+
+	zcap "github.com/zap-proto/go/cap"
+)
+
+// fixedSigner is an ed25519 signer over a FIXED 32-byte seed so the KAT is
+// fully deterministic and reproducible from JS. It mirrors cap.Ed25519Signer
+// (64-byte sig at the leading bytes, SchemeEd25519 tag at AlgTagOffset) but
+// pins the key material instead of generating it.
+type fixedSigner struct {
+	priv ed25519.PrivateKey
+	pub  [32]byte
+}
+
+func newFixedSigner(seed []byte) *fixedSigner {
+	priv := ed25519.NewKeyFromSeed(seed)
+	s := &fixedSigner{priv: priv}
+	s.pub = zcap.Hash32(priv.Public().(ed25519.PublicKey))
+	return s
+}
+
+func (s *fixedSigner) Sign(payload []byte) ([zcap.SigSize]byte, error) {
+	var out [zcap.SigSize]byte
+	sig := ed25519.Sign(s.priv, payload)
+	copy(out[:ed25519.SignatureSize], sig)
+	out[zcap.AlgTagOffset] = byte(zcap.SchemeEd25519)
+	return out, nil
+}
+
+func (s *fixedSigner) Public() [32]byte { return s.pub }
+
+func u64bytes(v uint64) []byte {
+	out := make([]byte, 8)
+	binary.LittleEndian.PutUint64(out, v)
+	return out
+}
+
+func u32pair(a, b uint32) []byte {
+	out := make([]byte, 8)
+	binary.LittleEndian.PutUint32(out[0:4], a)
+	binary.LittleEndian.PutUint32(out[4:8], b)
+	return out
+}
+
+func main() {
+	seed := make([]byte, 32)
+	for i := range seed {
+		seed[i] = 0x42
+	}
+	signer := newFixedSigner(seed)
+
+	var target, holder [32]byte
+	for i := range target {
+		target[i] = byte(i)        // 0x00..0x1f
+		holder[i] = byte(0xff - i) // 0xff..0xe0
+	}
+
+	in := zcap.Issuance{
+		Kind:        uint32(zcap.KindIAMSession),
+		Target:      target,
+		Holder:      holder,
+		Permissions: zcap.PermAttenuate | 0x000000000000000F,
+		// Parent stays zero -> root cap.
+		IssuedAt:  1700000000,
+		ExpiresAt: 1900000000,
+		Caveats: []zcap.Caveat{
+			{Kind: zcap.CaveatMaxAmount, Value: u64bytes(1_000_000)},
+			{Kind: zcap.CaveatRateLimit, Value: u32pair(60, 10)},
+			{Kind: zcap.CaveatIPCIDR, Value: []byte("10.0.0.0/8")},
+		},
+	}
+
+	c, err := zcap.Issue(in, signer)
+	if err != nil {
+		panic(err)
+	}
+
+	id := c.ID()
+	canon := c.CanonicalBytes()
+	sig := c.Signature()
+	rawPub := signer.priv.Public().(ed25519.PublicKey)
+
+	// Emit a tiny KEY=hex manifest the JS KAT test parses.
+	fmt.Printf("seed=%s\n", hex.EncodeToString(seed))
+	fmt.Printf("pubkey=%s\n", hex.EncodeToString(rawPub))
+	fmt.Printf("issuer=%s\n", hex.EncodeToString(signer.pub[:]))
+	fmt.Printf("cap=%s\n", hex.EncodeToString(c.Bytes()))
+	fmt.Printf("canonical=%s\n", hex.EncodeToString(canon))
+	fmt.Printf("capid=%s\n", hex.EncodeToString(id[:]))
+	fmt.Printf("sig=%s\n", hex.EncodeToString(sig[:]))
+}

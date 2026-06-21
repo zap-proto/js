@@ -20,6 +20,38 @@ on the TS side — no legacy IDL, no `interface @0xID` dialect, just the wire ru
 | `envelope.ts` | The msgType+method+capability call envelope. **Byte-compatible with `hanzoai/ui-customization/server/wire.go`.** |
 | `client.ts` | TCP RPC client speaking the luxfi/zap node framing (length-prefix + nodeID handshake + correlated frames). Node-only (`node:net`). |
 | `pipeline.ts` | Two-connection promise pipelining (mirrors the Go `Client.Pipeline()`). |
+| `cap.ts` | Capability runtime — `issue`/`attenuate`/`verify`/`verifyChain`/`revoke`, `Ed25519Signer`, `Verifier`, `canonicalBytes`, `capId`. The TS peer of `github.com/zap-proto/go/cap`. Node-only (`node:crypto` for synchronous Ed25519 + SHA-256). Exported at `@zap-proto/zap/cap`, NOT from the universal root. |
+
+## Capability runtime (`src/cap.ts` → `@zap-proto/zap/cap`)
+
+Byte-for-byte port of `github.com/zap-proto/go/cap`. SPEC: `zap-spec/SPEC.md`
+§2.3/§3/§4 + `capabilities_kinds.md`.
+
+- **Synchronous**, matching Go exactly — no async contagion through the auth
+  primitive. Crypto is `node:crypto` (stdlib): Ed25519 (RFC 8032, raw seed
+  framed into PKCS8/SPKI via fixed ASN.1 prefixes) + SHA-256. **Zero npm deps.**
+- **CapID** = `SHA-256(canonicalBytes(cap) || Sig)` (spec-corrected from BLAKE3).
+  **Signed scope** = `Capability[0..164) || canonical(Caveats)` (Kind:u32-LE ||
+  len:u32-LE || Value per caveat, list order) — heap-indirection excluded so the
+  bytes are identical across runtimes.
+- **Fail-closed scheme dispatch**: tag at `Sig[3407]`. Only `{0x01,0x02,0x03,0x04}`
+  known; `0x00`/unknown → `unhandled_scheme`, no fallback. Ed25519 (0x02) is the
+  only built-in primitive; ML-DSA-65 / hybrid / secp256k1 are refused unless a
+  `schemeVerify` hook is wired (JS ships no PQ primitive — it NEVER fabricates a
+  verify or returns true on an unverified sig). A hook may DECLINE a tag by
+  returning `new CapError("unhandled_scheme")`; Ed25519 then bootstraps, any
+  other declined tag is terminal.
+- **Errors**: one `CapError` class with a `code` (`err.code`) mirroring Go's
+  sentinels; `verify`/`verifyChain` return `CapError | null` (null = ok), mint
+  paths (`issue`/`attenuate`/`revoke`) throw on refusal.
+- **Cross-lang KAT**: `test/cap_go_kat.hex` (a Go-signed cap over seed 32×0x42)
+  is decoded in `test/cap_kat.test.ts`; JS reproduces Go's exact canonicalBytes,
+  CapID (`1b809edc…`), signature, and wire bytes, verifies the Go sig → true,
+  rejects a tamper → false. Regenerate via `test/cap_go_kat_gen.go.txt` (`go run`
+  it inside the go module).
+- **Codec** vendored into `cap.ts` (built on `Builder`/`StructView`/`ListView`),
+  exactly as Go vendors `capabilities_zap.go` into package `cap`. Schema:
+  `zap-spec/capabilities.zap` (v1.1: 3408-byte Sig footer, struct 3572 B).
 
 ## Wire format (the contract)
 
