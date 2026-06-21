@@ -35,8 +35,9 @@ import { ZapClient, pipeline } from "@zap-proto/zap/node";
 
 | Sub-path             | Role                                                              |
 | -------------------- | ---------------------------------------------------------------- |
-| `@zap-proto/zap`     | `wire` / `view` / `builder` / `envelope` — universal, no Node.   |
+| `@zap-proto/zap`     | `wire` / `view` / `builder` / `envelope` + `Session` / `Pipeliner` — universal, no Node. |
 | `@zap-proto/zap/node`| `ZapClient` (TCP, `node:net`) + two-connection `pipeline`.       |
+| `@zap-proto/zap/cap` | The capability runtime — `issue` / `attenuate` / `verify` / `verifyChain` / `revoke` (Node, `node:crypto`). |
 
 ## Layers
 
@@ -46,8 +47,70 @@ import { ZapClient, pipeline } from "@zap-proto/zap/node";
 | `view.ts`     | root   | `Message`, `StructView`, `ListView` — the read side.                    |
 | `builder.ts`  | root   | `Builder`, `StructBuilder`, `ListBuilder` — the write side.             |
 | `envelope.ts` | root   | msgType + method + capability call envelope.                            |
+| `promise.ts`  | root   | Target-based promise pipelining — `Session` + `Pipeliner` (universal).   |
 | `client.ts`   | `/node`| TCP RPC client speaking the luxfi/zap node framing (uses `node:net`).   |
-| `pipeline.ts` | `/node`| Two-connection promise pipelining.                                      |
+| `pipeline.ts` | `/node`| Two-connection socket overlap on top of `promise.ts`.                   |
+| `cap.ts`      | `/cap` | Capability runtime — signed, attenuable authority tokens (`node:crypto`). |
+
+## Capabilities
+
+`@zap-proto/zap/cap` is the capability runtime — signed, attenuable tokens of
+authority, the byte-for-byte TypeScript peer of
+[`github.com/zap-proto/go/cap`](https://github.com/zap-proto/go/tree/main/cap).
+A `Cap` grants a holder a `permissions` bitmask over a `target`, issued by an
+`issuer`; caps chain via `parent`, and `verifyChain` walks back to a root.
+
+```ts
+import { issue, attenuate, CapKind, Perm, Ed25519Signer } from "@zap-proto/zap/cap";
+
+const signer = Ed25519Signer.generate();
+const root = issue(
+  { kind: CapKind.IAMSession, permissions: Perm.Attenuate, expiresAt: 2_000_000_000n },
+  signer,
+);
+// Narrower child: permissions intersect, expiry only shrinks, parent must carry
+// Perm.Attenuate (or be a CapKind.Delegate cap).
+const child = attenuate(root, childHolder, Perm.Audit, undefined, 0n, signer);
+```
+
+`issue` / `attenuate` enforce the SPEC §2.3 delegation gate at mint time;
+`verify` / `verifyChain` return `CapError | null` (null = ok) with **fail-closed**
+scheme dispatch — the tag at `Sig[3407]` must be in `{0x01,0x02,0x03,0x04}` or it
+is refused, never downgraded. The CapID is `SHA-256(canonicalBytes(cap) || Sig)`
+and the signed scope is `Capability[0..164) || canonical(Caveats)` — byte-identical
+to the Go, Python, and Rust runtimes (pinned by `test/cap_go_kat.hex`). Ed25519 is
+the only built-in primitive (`node:crypto`, **zero npm deps**); ML-DSA-65 / hybrid
+/ secp256k1 are refused unless a `schemeVerify` hook is wired — it never fabricates
+a verify. The capability layer ships in all four reference runtimes (Go, Python,
+Rust, TypeScript).
+
+## Promise pipelining
+
+`Session` + `Pipeliner` (root entry, universal) are the canonical Target-based
+pipelining model — the byte-for-byte TS peer of Go's `rpc.Session` /
+`rpc.Pipeliner` and Python's `Session` / `Pipeliner`. A call carries a `promiseID`;
+a dependent call sets `target` to a prior call's `promiseID`, and the server
+substitutes that call's resolved body as the dependent's payload before dispatch.
+
+```ts
+import { Session, Pipeliner, buildRequest } from "@zap-proto/zap";
+
+const sess = new Session();
+const srv = new Pipeliner(dispatch);     // (envelope) => Promise<responseEnvelope>
+
+const p = sess.next();                   // A: authenticate (target = NO_TARGET)
+const a = await srv.handle(buildRequest(sess.origin(p, AUTH_ORDINAL, cap, req)));
+const q = sess.next();                   // B: pipeline on A's answer
+const b = await srv.handle(buildRequest(sess.pipe(q, p, GET_ORDINAL, cap)));
+```
+
+The `Pipeliner` queues a dependent whose target has not resolved, refuses
+(`Status.BadRequest`) one whose target answered non-OK or was `finish`ed, and
+never hangs. `buildRequest` / `buildResponse` are byte-identical to Go and Python,
+so a pipelined exchange round-trips between all three. The `/node` `pipeline`
+helper builds on this to ship the dependent leg on a second socket for true
+wire-level overlap. (Rust's `zap-rpc` implements the richer capnp `PromisedAnswer`
+superset.)
 
 ## Codegen — `zapgen`
 
