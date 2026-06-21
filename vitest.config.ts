@@ -8,10 +8,13 @@ import { defineConfig } from "vitest/config";
 export default defineConfig({
   resolve: {
     alias: {
-      // Order matters: the ./node sub-path alias must precede the bare
-      // specifier so it is not shadowed.
+      // Order matters: the sub-path aliases must precede the bare specifier so
+      // they are not shadowed.
       "@zap-proto/zap/node": fileURLToPath(
         new URL("./src/node.ts", import.meta.url),
+      ),
+      "@zap-proto/zap/cap": fileURLToPath(
+        new URL("./src/cap.ts", import.meta.url),
       ),
       "@zap-proto/zap": fileURLToPath(new URL("./src/index.ts", import.meta.url)),
     },
