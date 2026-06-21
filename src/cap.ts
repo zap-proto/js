@@ -193,6 +193,7 @@ export type CapErrorCode =
   | "too_short"
   | "bad_magic"
   | "bad_caveats"
+  | "unknown_caveat"
   | "sig_mismatch"
   | "expired"
   | "revoked"
@@ -211,6 +212,7 @@ const ERR_MESSAGES: Record<CapErrorCode, string> = {
   too_short: "cap: buffer too short",
   bad_magic: "cap: bad magic",
   bad_caveats: "cap: caveat block malformed",
+  unknown_caveat: "cap: unknown caveat kind (fail-closed per SPEC §2.3)",
   sig_mismatch: "cap: signature does not verify",
   expired: "cap: expired",
   revoked: "cap: revoked",
@@ -857,6 +859,12 @@ export class Verifier {
   verify(c: Cap, now: bigint): CapError | null {
     // Walk the caveat list once to catch bad framing.
     if (!c.caveatFramingOk()) return err("bad_caveats");
+    // SPEC §2.3: verifiers MUST refuse an unknown CaveatKind (fail-closed). A
+    // caveat is a restriction; accepting an unrecognized one would silently
+    // ignore a constraint the issuer intended (a privilege-escalation fail-open).
+    for (const cav of c.caveats()) {
+      if (cav.kind > CaveatKind.NonceHash) return err("unknown_caveat");
+    }
     // Expiry check. 0 means "never expires".
     const exp = c.expiresAt();
     if (exp !== 0n && now > exp) return err("expired");

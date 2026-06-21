@@ -149,6 +149,26 @@ describe("cap: Verify", () => {
     expect(v.verify(c, 1700000000n)).toBeNull();
   });
 
+  it("refuses an unknown caveat kind (fail-closed, SPEC §2.3)", () => {
+    // Was a cross-language divergence: Go/Python accepted, Rust rejected. Now
+    // all four fail-closed — a caveat is a restriction that cannot be ignored.
+    const signer = Ed25519Signer.generate();
+    const c = issue(
+      {
+        kind: CapKind.KMSAccess,
+        permissions: 0xffn,
+        expiresAt: 2000000000n,
+        caveats: [{ kind: 0x42424242, value: new TextEncoder().encode("must-not-be-ignored") }],
+      },
+      signer,
+    );
+    const v = new Verifier({ issuerKey: issuerKeyFn(signer) });
+    expect(v.verify(c, 1700000000n)?.code).toBe("unknown_caveat");
+    expect(v.verifyChain(c, [], 0x01n, c.target(), c.holder(), 1700000000n)?.code).toBe(
+      "unknown_caveat",
+    );
+  });
+
   it("rejects an expired cap (TestVerifyRejectsExpired)", () => {
     const signer = Ed25519Signer.generate();
     const c = issue(
