@@ -19,7 +19,8 @@ on the TS side — no legacy IDL, no `interface @0xID` dialect, just the wire ru
 | `builder.ts` | `Builder` (header + cursor), `StructBuilder` (fixed section + deferred tails), `ListBuilder` (`addObjectBytes`). Write side. |
 | `envelope.ts` | The msgType+method+capability call envelope. **Byte-compatible with `hanzoai/ui-customization/server/wire.go`.** |
 | `client.ts` | TCP RPC client speaking the luxfi/zap node framing (length-prefix + nodeID handshake + correlated frames). Node-only (`node:net`). |
-| `pipeline.ts` | Two-connection promise pipelining (mirrors the Go `Client.Pipeline()`). |
+| `promise.ts` | Target-based promise pipelining — `Session` (client: PromiseID allocator + `origin`/`pipe` Call builders) + `Pipeliner` (server: promise table that resolves Target before dispatch, queues unresolved dependents, refuses failed/finished). Byte-for-byte the TS peer of Go's `rpc.Session` / `rpc.Pipeliner`. Universal (no `node:net`), exported from the root. |
+| `pipeline.ts` | Two-connection socket overlap on top of `promise.ts` — ships the dependent leg on a second TCP connection so two calls are genuinely in flight (one ZAP connection is strictly FIFO). Node-only (`node:net`). |
 | `cap.ts` | Capability runtime — `issue`/`attenuate`/`verify`/`verifyChain`/`revoke`, `Ed25519Signer`, `Verifier`, `canonicalBytes`, `capId`. The TS peer of `github.com/zap-proto/go/cap`. Node-only (`node:crypto` for synchronous Ed25519 + SHA-256). Exported at `@zap-proto/zap/cap`, NOT from the universal root. |
 
 ## Capability runtime (`src/cap.ts` → `@zap-proto/zap/cap`)
