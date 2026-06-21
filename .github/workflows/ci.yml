@@ -13,7 +13,13 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v6
-      - run: corepack enable
+      # Provision pnpm the same way the release workflow does (action-setup,
+      # pinned to v9) — corepack floats to a stricter pnpm that treats
+      # ERR_PNPM_IGNORED_BUILDS (esbuild's gated postinstall) as a fatal
+      # install error. One pnpm provisioning method across both workflows.
+      - uses: pnpm/action-setup@v4
+        with:
+          version: 9
       - uses: actions/setup-node@v6
         with:
           node-version: 22
