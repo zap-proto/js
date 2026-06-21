@@ -2,45 +2,26 @@
 // See the file LICENSE for licensing terms.
 
 /**
- * pipeline.ts — promise pipelining over two ZAP connections.
+ * pipeline.ts — two-connection overlap for promise pipelining over the TCP
+ * transport (Node-only; rides on {@link ZapClient}).
  *
- * Mirrors the canonical Go ZAP client's Pipeline() (github.com/zap-proto/go): a
- * dependent call references the not-yet-resolved answer of an earlier call by
- * Target = the earlier call's PromiseID. The server resolves the first call's
- * answer (the authenticated org) and only then dispatches the dependent call
- * against it — no extra client round trip.
+ * The pipelining MECHANISM is the Target field of the call envelope, resolved
+ * by a server-side promise table — see {@link Session}/{@link Pipeliner} in
+ * promise.ts (the universal, byte-for-byte peer of Go's rpc.Session /
+ * rpc.Pipeliner). This file is only the transport convenience for exercising
+ * it across a real socket: one ZAP connection processes its frames strictly
+ * FIFO (one handler runs to completion before the next frame is read), so to
+ * have two calls genuinely in flight at once you ship the dependent leg on a
+ * SECOND connection. A `Pipeliner`-backed server chains them by Target.
  *
- * Why two connections: the luxfi/zap transport processes a single connection's
- * frames strictly FIFO (one handler runs to completion before the next frame is
- * read). Genuine concurrent in-flight calls therefore require two connections;
- * the server's promise table coordinates them. This is exactly what the Go
- * Pipeline() does — the dependent getModules ships on a SECOND client.
- *
- * Single-connection async dispatch (queue a dependent call against an
- * unresolved local answer and flush both before the round trip resolves, all on
- * ONE connection) is a follow-up: it needs the transport to admit a second
- * outbound frame before the first response arrives, which the luxfi/zap node
- * supports per-connection, but the server's FIFO handler would serialize them.
- * Until the server runs concurrent per-connection dispatch, two connections is
- * the only way to overlap. TODO(follow-up): single-connection variant.
+ * The single-connection, in-process path (drive a `Pipeliner` directly with
+ * the same Target wire bytes, no second socket) is the unit-tested one in
+ * test/pipeline.test.ts; this helper is the socket-level overlap on top of it.
  */
 
 import { ZapClient } from "./client.js";
 import { Status, type Response } from "./envelope.js";
-
-/** Process-unique promise-id allocator for pipeline groups (mirrors pipelineIDSeq). */
-let pipelineIDSeq = 1 << 20;
-function nextPipelineID(): number {
-  pipelineIDSeq = (pipelineIDSeq + 1) >>> 0;
-  return pipelineIDSeq;
-}
-
-/** One leg of a pipelined pair: which method, and whether it targets the other. */
-export interface PipelineLeg {
-  method: number;
-  /** When true, this leg targets the FIRST leg's promise (the dependent call). */
-  dependent?: boolean;
-}
+import { Session } from "./promise.js";
 
 /** Result of a pipelined pair: both responses, in (first, second) order. */
 export interface PipelineResult {
@@ -49,14 +30,14 @@ export interface PipelineResult {
 }
 
 /**
- * Run two calls as a pipeline: `first` on connection `a`, `second` on
- * connection `b` with Target = first's PromiseID. The dependent send is
- * released only after the first send is committed (barrier), so the server
- * resolves first's promise before — or concurrently with — second's await,
- * never after a spurious timeout. Both are in flight before either resolves.
+ * Overlap two pipelined calls across two TCP connections: `first` on `a`,
+ * `second` on `b` with Target = first's PromiseID, both in flight before
+ * either resolves. The dependent send is barriered behind the first send so
+ * the server records first's answer before — or concurrently with — second's
+ * await.
  *
- * Returns both responses. Status checks are left to the caller (it knows which
- * struct each body decodes to).
+ * Returns both responses; status checks are left to the caller (it knows
+ * which struct each body decodes to).
  */
 export async function pipeline(
   a: ZapClient,
@@ -64,8 +45,9 @@ export async function pipeline(
   first: number,
   second: number,
 ): Promise<PipelineResult> {
-  const firstPromise = nextPipelineID();
-  const secondPromise = nextPipelineID();
+  const session = new Session();
+  const firstPromise = session.next();
+  const secondPromise = session.next();
 
   // Barrier: hold the dependent send until the first send has been issued.
   let releaseBarrier!: () => void;
@@ -74,16 +56,14 @@ export async function pipeline(
   });
 
   const firstCall = (async () => {
-    // Issuing the call synchronously writes its frame, then we release the
-    // barrier so the dependent leg ships next.
-    const p = a.call(first, { promiseID: firstPromise });
+    const p = a.call(first, { promiseID: firstPromise.id });
     releaseBarrier();
     return p;
   })();
 
   const secondCall = (async () => {
     await barrier;
-    return b.call(second, { promiseID: secondPromise, target: firstPromise });
+    return b.call(second, { promiseID: secondPromise.id, target: firstPromise.id });
   })();
 
   const [firstResp, secondResp] = await Promise.all([firstCall, secondCall]);

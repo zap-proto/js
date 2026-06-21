@@ -39,6 +39,19 @@ describe("zapgen interface grammar (FIX 4)", () => {
     expect(out).toContain("echo: 1,");
   });
 
+  it("emits the canonical Target-based pipelining client (Session + On form)", () => {
+    const [, out] = emitTS(file);
+    // The client owns a Session (allocates PromiseIDs) — no hardcoded promiseID.
+    expect(out).toContain("private readonly session = new Session();");
+    // The originating call goes through session.origin (Target = NO_TARGET) and
+    // the pipelined call through session.pipe (Target = on.id) — NOT a literal
+    // `target: NO_TARGET` hardcoded into every method.
+    expect(out).toContain("this.session.origin(p, EchoMethod.echo");
+    expect(out).toContain("async echoOn(on: PromiseHandle)");
+    expect(out).toContain("this.session.pipe(p, on, EchoMethod.echo");
+    expect(out).not.toContain("target: NO_TARGET");
+  });
+
   it("still emits struct View + Builder (struct emission unchanged)", () => {
     const [, out] = emitTS(file);
     expect(out).toContain("export class EchoReq extends StructView");

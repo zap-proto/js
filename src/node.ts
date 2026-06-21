@@ -15,9 +15,4 @@
 
 export { ZapClient, type ConnectOptions } from "./client.js";
 
-export {
-  pipeline,
-  assertOK,
-  type PipelineLeg,
-  type PipelineResult,
-} from "./pipeline.js";
+export { pipeline, assertOK, type PipelineResult } from "./pipeline.js";

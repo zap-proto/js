@@ -37,6 +37,14 @@ function lowerFirst(s: string): string {
 }
 const camelLower = lowerFirst;
 
+/** upperFirst uppercases the first character (for the private invoke<M> name). */
+function upperFirst(s: string): string {
+  if (s === "") return s;
+  const c = s[0];
+  if (c >= "a" && c <= "z") return c.toUpperCase() + s.slice(1);
+  return s;
+}
+
 /** structSize is the high-water mark of every field's [offset, offset+size). */
 function structSize(s: Struct): number {
   let size = 0;
@@ -153,10 +161,11 @@ export function emitTS(f: File): [string, string] {
     w.push("  buildRequest,\n");
     w.push("  parseRequest,\n");
     w.push("  buildResponse,\n");
-    w.push("  NO_TARGET,\n");
     w.push("  Status,\n");
+    w.push("  Session,\n");
     w.push("  type Call,\n");
     w.push("  type Response,\n");
+    w.push("  type PromiseHandle,\n");
   }
   w.push('} from "@zap-proto/zap";\n\n');
 
@@ -381,14 +390,21 @@ function emitTSInterface(w: string[], iface: Interface): void {
   emitTSServer(w, iface);
 }
 
-/** reqType returns the TS arg type for a method's request param. */
+/** reqArg returns the TS arg type for a method's request param. */
 function reqArg(m: Method): string {
   return m.request ? `${m.request.name}: Uint8Array` : "";
 }
 
-/** respType returns the TS return type for a method's response. */
-function respType(m: Method): string {
-  return m.response ? "Promise<Uint8Array>" : "Promise<void>";
+/**
+ * clientRet is the result type of a generated client method. Both the
+ * originating and pipelined ("On") forms return the call's own PromiseHandle
+ * first (so chains compose), then the body for a method with a response.
+ * Mirrors the Go client returning (rpc.Promise, []byte, error).
+ */
+function clientRet(m: Method): string {
+  return m.response
+    ? "Promise<[PromiseHandle, Uint8Array]>"
+    : "Promise<PromiseHandle>";
 }
 
 function emitTSClient(w: string[], iface: Interface): void {
@@ -402,26 +418,39 @@ function emitTSClient(w: string[], iface: Interface): void {
   w.push("  call(envelope: Uint8Array): Promise<Response>;\n");
   w.push("}\n\n");
 
+  w.push(
+    `/**\n * Each call takes a fresh PromiseID from \`session\`; the pipelined "On" form\n * of a method sets Target to a prior call's Promise so the server chains them.\n */\n`,
+  );
   w.push(`export class ${iface.name}Client {\n`);
+  w.push("  private readonly session = new Session();\n");
   w.push(`  constructor(private readonly channel: ${iface.name}Channel, private readonly cap: Uint8Array = new Uint8Array(0)) {}\n\n`);
   for (const m of iface.methods) {
     const mname = camelLower(m.name);
-    w.push(`  async ${mname}(${reqArg(m)}): ${respType(m)} {\n`);
+    const Mname = upperFirst(mname);
     const payload = m.request ? m.request.name : "new Uint8Array(0)";
-    w.push(`    const envelope = buildRequest({\n`);
-    w.push(`      method: ${iface.name}Method.${mname},\n`);
-    w.push(`      promiseID: 0,\n`);
-    w.push(`      target: NO_TARGET,\n`);
-    w.push(`      cap: this.cap,\n`);
-    w.push(`      payload: ${payload},\n`);
-    w.push(`    });\n`);
-    w.push(`    const resp = await this.channel.call(envelope);\n`);
-    w.push(`    if (resp.status !== Status.OK) {\n`);
+
+    // Originating form: m(req) — Target = NO_TARGET, own payload.
+    w.push(`  async ${mname}(${reqArg(m)}): ${clientRet(m)} {\n`);
+    w.push("    const p = this.session.next();\n");
+    w.push(`    return this.invoke${Mname}(this.session.origin(p, ${iface.name}Method.${mname}, this.cap, ${payload}), p);\n`);
+    w.push("  }\n\n");
+
+    // Pipelined form: mOn(on) — Target = on.id, payload supplied server-side.
+    w.push(
+      `  /** Issue ${mname} pipelined on \`on\`'s answer (the server substitutes it for the payload). */\n`,
+    );
+    w.push(`  async ${mname}On(on: PromiseHandle): ${clientRet(m)} {\n`);
+    w.push("    const p = this.session.next();\n");
+    w.push(`    return this.invoke${Mname}(this.session.pipe(p, on, ${iface.name}Method.${mname}, this.cap), p);\n`);
+    w.push("  }\n\n");
+
+    // Shared envelope path: one place that ships the Call and checks status.
+    w.push(`  private async invoke${Mname}(call: Call, p: PromiseHandle): ${clientRet(m)} {\n`);
+    w.push("    const resp = await this.channel.call(buildRequest(call));\n");
+    w.push("    if (resp.status !== Status.OK) {\n");
     w.push(`      throw new Error(\`${iface.name}.${mname}: status \${resp.status}\`);\n`);
-    w.push(`    }\n`);
-    if (m.response) {
-      w.push(`    return resp.body;\n`);
-    }
+    w.push("    }\n");
+    w.push(m.response ? "    return [p, resp.body];\n" : "    return p;\n");
     w.push("  }\n\n");
   }
   w.push("}\n\n");
